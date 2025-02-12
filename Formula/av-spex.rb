@@ -21,8 +21,8 @@ class AvSpex < Formula
   end
 
   resource "art" do
-    url "https://files.pythonhosted.org/packages/ea/95/0dfd92a22e0b52dd6c62d4aa82f47e65ddf79cfa3b5d870dd7e57d152d78/art-6.1.tar.gz"
-    sha256 "52f39c4089bffb99e9ebcf599e9a0b9e3b94d4e8f6e3cdb2c0840fd501b91df6"
+    url "https://files.pythonhosted.org/packages/b6/15/6c4ac6bf544a01230bad5b45ce4f624051b9dc9567875da05cfdbfc2cafa/art-6.1.tar.gz"
+    sha256 "6ab3031e3b7710039e73497b0e750cadfe04d4c1279ce3a123500dbafb9e1b64"
   end
 
   resource "lxml" do
