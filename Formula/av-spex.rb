@@ -65,6 +65,8 @@ class AvSpex < Formula
     venv.pip_install "pip"
     venv.pip_install "setuptools"
     venv.pip_install "wheel"
+
+    ENV["PYQT6_BINDINGS_LICENSE"] = "yes"
   
     # Install all Python dependencies, EXCEPT Jupyter-related ones
     dependencies = resources.reject { |r| r.name.match?(/jupyter|babel/) }
