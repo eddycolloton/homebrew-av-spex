@@ -11,8 +11,7 @@ class AvSpex < Formula
   depends_on "qt@6"
   depends_on "numpy"
   depends_on "pkg-config"
-  depends_on "ninja" => :build
-
+  depends_on "cmake" => :build
 
   resource "setuptools" do
     url "https://files.pythonhosted.org/packages/92/ec/089608b791d210aec4e7f97488e67ab0d33add3efccb83a056cbafe3a2a6/setuptools-75.8.0.tar.gz"
@@ -67,18 +66,18 @@ class AvSpex < Formula
   def install
     venv = virtualenv_create(libexec, "python3.12")
   
-    # Upgrade pip first
+    # Upgrade pip, setuptools, and wheel before installing dependencies
     venv.pip_install "pip"
     venv.pip_install "setuptools"
     venv.pip_install "wheel"
   
-    # Install all dependencies in a controlled manner
-    venv.pip_install resources
+    # Install all Python dependencies, EXCEPT Jupyter-related ones
+    dependencies = resources.reject { |r| r.name.match?(/jupyter|babel/) }
+    venv.pip_install dependencies
   
-    # Ensure `pip` doesn't try to install extra dependencies like `jupyterlab`
+    # Ensure the main package is installed WITHOUT unnecessary dependencies
     venv.pip_install_and_link buildpath, :build_isolation => false
-  end
-  
+  end  
 
   test do
     system bin/"av-spex", "--version"
