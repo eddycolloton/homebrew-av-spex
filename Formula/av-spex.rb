@@ -9,6 +9,11 @@ class AvSpex < Formula
 
   depends_on "python@3.12"
   depends_on "qt@6"
+  depends_on "numpy"
+  depends_on "pkg-config"
+  depends_on "meson"
+  depends_on "ninja"
+  depends_on "gcc"
 
   resource "appdirs" do
     url "https://files.pythonhosted.org/packages/d7/d8/05696357e0311f5b5c316d7b95f46c669dd9c15aaeecbb48c7d0aeb88c40/appdirs-1.4.4.tar.gz"
@@ -51,6 +56,12 @@ class AvSpex < Formula
   end
 
   def install
+    # Create a dummy file to act as numpy since we're using system numpy
+    system "touch", "numpy.py"
+    
+    # Set environment variables for numpy
+    ENV.append_path "PYTHONPATH", Formula["numpy"].opt_prefix/Language::Python.site_packages("python3.12")
+    
     virtualenv_install_with_resources
   end
 
