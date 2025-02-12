@@ -66,16 +66,19 @@ class AvSpex < Formula
 
   def install
     venv = virtualenv_create(libexec, "python3.12")
-    venv.pip_install "pip"  # Upgrade pip first
+  
+    # Upgrade pip first
+    venv.pip_install "pip"
     venv.pip_install "setuptools"
     venv.pip_install "wheel"
   
-    # Install all Python dependencies
+    # Install all dependencies in a controlled manner
     venv.pip_install resources
   
-    # Install the main package
-    venv.pip_install_and_link buildpath
+    # Ensure `pip` doesn't try to install extra dependencies like `jupyterlab`
+    venv.pip_install_and_link buildpath, :build_isolation => false
   end
+  
 
   test do
     system bin/"av-spex", "--version"
