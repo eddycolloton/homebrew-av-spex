@@ -15,11 +15,6 @@ class AvSpex < Formula
     sha256 "7d5d0167b2b1ba821647616af46a749d1c653740dd0d2415100fe26e27afdf41"
   end
 
-  resource "ruamel.yaml" do
-    url "https://files.pythonhosted.org/packages/29/81/4dfc17eb6692c337c3133ab86c28fcc07088c9320fc5125f2bcaf4a14d03/ruamel.yaml-0.18.6.tar.gz"
-    sha256 "8b27e6a33c8516dcc97accd45a8d6853051767051a135fae51068f8f29a9e8b0"
-  end
-
   resource "colorlog" do
     url "https://files.pythonhosted.org/packages/78/6b/4e5481ddcdb9c255b2715f54c863629f1543e97bc8c309d1c5c131ad14f2/colorlog-6.7.0.tar.gz"
     sha256 "bd94bd21c1e13fac7bd3153f4bc3a7dc0eb0974b8bc2fdf1a989e474f6e582e5"
