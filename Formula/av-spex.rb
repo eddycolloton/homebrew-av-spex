@@ -8,10 +8,6 @@ class AvSpex < Formula
   license "GPL-3.0-only"
 
   depends_on "python@3.12"
-  depends_on "qt@6"
-  depends_on "numpy"
-  depends_on "pkg-config"
-  depends_on "cmake" => :build
 
   resource "setuptools" do
     url "https://files.pythonhosted.org/packages/92/ec/089608b791d210aec4e7f97488e67ab0d33add3efccb83a056cbafe3a2a6/setuptools-75.8.0.tar.gz"
@@ -59,26 +55,8 @@ class AvSpex < Formula
   end
 
   def install
-    venv = virtualenv_create(libexec, "python3.12")
-  
-    # Upgrade pip, setuptools, and wheel
-    venv.pip_install "pip"
-    venv.pip_install "setuptools"
-    venv.pip_install "wheel"
-  
-    # Install dependencies EXCEPT PyQt6
-    dependencies = resources.reject { |r| r.name == "PyQt6" }
-    venv.pip_install dependencies
-  
-    # Install PyQt6 separately with auto-confirmation
-    resource("PyQt6").stage do
-      system "yes | #{libexec}/bin/python -m pip install ."
-    end
-  
-    # Install the main package
-    venv.pip_install_and_link buildpath, :build_isolation => false
+    virtualenv_install_with_resources
   end
-  
 
   test do
     system bin/"av-spex", "--version"
