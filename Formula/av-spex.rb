@@ -65,20 +65,16 @@ class AvSpex < Formula
   end
 
   def install
-    venv = virtualenv_create(libexec, Formula["python@3.12"].opt_bin/"python3.12")
-    
-    # First install setuptools and wheel
+    venv = virtualenv_create(libexec, "python3.12")
+    venv.pip_install "pip"  # Upgrade pip first
     venv.pip_install "setuptools"
     venv.pip_install "wheel"
-    
-    # Install dependencies
-    venv.pip_install resources.reject { |r| ["setuptools", "wheel"].include? r.name }
-
+  
+    # Install all Python dependencies
+    venv.pip_install resources
+  
     # Install the main package
     venv.pip_install_and_link buildpath
-
-    # Ensure binary is properly linked
-    bin.install_symlink libexec/"bin/av-spex"
   end
 
   test do
