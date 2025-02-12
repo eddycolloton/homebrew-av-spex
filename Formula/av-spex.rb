@@ -8,6 +8,7 @@ class AvSpex < Formula
   license "GPL-3.0-only"
 
   depends_on "python@3.10"
+  depends_on "qt@6"
   depends_on "pyqt@6"
 
   resource "setuptools" do
@@ -56,7 +57,6 @@ class AvSpex < Formula
   end
 
   def install
-    inreplace "pyproject.toml", '"PyQt6==6.7.1"', '""'
     virtualenv_install_with_resources
   end
 
