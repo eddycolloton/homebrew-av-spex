@@ -7,7 +7,7 @@ class AvSpex < Formula
   sha256 "03fb3eb9db64655a5f88db5ebbc1002b2ee857ff71853f1e79d52e4ff68d5b4b" 
   license "GPL-3.0-only"
 
-  depends_on "python@3.11"
+  depends_on "python@3.10"
 
   resource "setuptools" do
     url "https://files.pythonhosted.org/packages/92/ec/089608b791d210aec4e7f97488e67ab0d33add3efccb83a056cbafe3a2a6/setuptools-75.8.0.tar.gz"
