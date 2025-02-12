@@ -56,6 +56,7 @@ class AvSpex < Formula
   end
 
   def install
+    inreplace "pyproject.toml", '"PyQt6==6.7.1"', '""'
     virtualenv_install_with_resources
   end
 
