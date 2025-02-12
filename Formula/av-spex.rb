@@ -11,9 +11,6 @@ class AvSpex < Formula
   depends_on "qt@6"
   depends_on "numpy"
   depends_on "pkg-config"
-  depends_on "meson"
-  depends_on "ninja"
-  depends_on "gcc"
 
   resource "appdirs" do
     url "https://files.pythonhosted.org/packages/d7/d8/05696357e0311f5b5c316d7b95f46c669dd9c15aaeecbb48c7d0aeb88c40/appdirs-1.4.4.tar.gz"
@@ -56,13 +53,22 @@ class AvSpex < Formula
   end
 
   def install
-    # Create a dummy file to act as numpy since we're using system numpy
-    system "touch", "numpy.py"
+    # Ensure setuptools and wheel are available for the installation
+    venv = virtualenv_create(libexec, "python3.12")
+    venv.pip_install resources.select { |r| ["setuptools", "wheel"].include? r.name }
     
-    # Set environment variables for numpy
-    ENV.append_path "PYTHONPATH", Formula["numpy"].opt_prefix/Language::Python.site_packages("python3.12")
+    # Set environment variables
+    ENV["PYTHONPATH"] = Formula["numpy"].opt_prefix/Language::Python.site_packages("python3.12")
     
-    virtualenv_install_with_resources
+    # Install the rest of the resources
+    resources.reject { |r| ["setuptools", "wheel"].include? r.name }.each do |r|
+      r.stage do
+        system Formula["python@3.12"].opt_bin/"python3.12", "-m", "pip", "install", *std_pip_args, "."
+      end
+    end
+    
+    # Install the package itself
+    system Formula["python@3.12"].opt_bin/"python3.12", "-m", "pip", "install", *std_pip_args, "."
   end
 
   test do
