@@ -69,14 +69,14 @@ class AvSpex < Formula
     venv.pip_install "setuptools"
     venv.pip_install "wheel"
     
-    # Set PYTHONPATH for numpy
-    ENV.prepend_path "PYTHONPATH", Formula["numpy"].opt_prefix/Language::Python.site_packages("python3.12")
-    
-    # Install all other dependencies
+    # Install dependencies
     venv.pip_install resources.reject { |r| ["setuptools", "wheel"].include? r.name }
-    
-    # Install the package itself
+
+    # Install the main package
     venv.pip_install_and_link buildpath
+
+    # Ensure binary is properly linked
+    bin.install_symlink libexec/"bin/av-spex"
   end
 
   test do
