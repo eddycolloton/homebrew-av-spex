@@ -61,20 +61,24 @@ class AvSpex < Formula
   def install
     venv = virtualenv_create(libexec, "python3.12")
   
-    # Upgrade pip, setuptools, and wheel before installing dependencies
+    # Upgrade pip, setuptools, and wheel
     venv.pip_install "pip"
     venv.pip_install "setuptools"
     venv.pip_install "wheel"
-
-    ENV["PYQT6_BINDINGS_LICENSE"] = "yes"
   
-    # Install all Python dependencies, EXCEPT Jupyter-related ones
-    dependencies = resources.reject { |r| r.name.match?(/jupyter|babel/) }
+    # Install dependencies EXCEPT PyQt6
+    dependencies = resources.reject { |r| r.name == "PyQt6" }
     venv.pip_install dependencies
   
-    # Ensure the main package is installed WITHOUT unnecessary dependencies
+    # Install PyQt6 separately with auto-confirmation
+    resource("PyQt6").stage do
+      system "yes | #{libexec}/bin/python -m pip install ."
+    end
+  
+    # Install the main package
     venv.pip_install_and_link buildpath, :build_isolation => false
-  end  
+  end
+  
 
   test do
     system bin/"av-spex", "--version"
