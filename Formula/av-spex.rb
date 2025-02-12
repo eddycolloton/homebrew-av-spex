@@ -53,22 +53,20 @@ class AvSpex < Formula
   end
 
   def install
-    # Ensure setuptools and wheel are available for the installation
-    venv = virtualenv_create(libexec, "python3.12")
-    venv.pip_install resources.select { |r| ["setuptools", "wheel"].include? r.name }
+    venv = virtualenv_create(libexec, Formula["python@3.12"].opt_bin/"python3.12")
     
-    # Set environment variables
-    ENV["PYTHONPATH"] = Formula["numpy"].opt_prefix/Language::Python.site_packages("python3.12")
+    # First install setuptools and wheel
+    venv.pip_install "setuptools"
+    venv.pip_install "wheel"
     
-    # Install the rest of the resources
-    resources.reject { |r| ["setuptools", "wheel"].include? r.name }.each do |r|
-      r.stage do
-        system Formula["python@3.12"].opt_bin/"python3.12", "-m", "pip", "install", *std_pip_args, "."
-      end
-    end
+    # Set PYTHONPATH for numpy
+    ENV.prepend_path "PYTHONPATH", Formula["numpy"].opt_prefix/Language::Python.site_packages("python3.12")
+    
+    # Install all other dependencies
+    venv.pip_install resources.reject { |r| ["setuptools", "wheel"].include? r.name }
     
     # Install the package itself
-    system Formula["python@3.12"].opt_bin/"python3.12", "-m", "pip", "install", *std_pip_args, "."
+    venv.pip_install_and_link buildpath
   end
 
   test do
