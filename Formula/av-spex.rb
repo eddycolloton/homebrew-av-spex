@@ -26,18 +26,18 @@ class AvSpex < Formula
   end
 
   resource "lxml" do
-    url "https://files.pythonhosted.org/packages/2b/b4/bbccb250adbee490553b6a52712c46c20ea1ba533a643f1424b27ffc6845/lxml-5.2.0.tar.gz"
-    sha256 "a67999fe34cd3adfb5847164823a7ad4571456a0496098a59ed84770762f5550"
+    url "https://files.pythonhosted.org/packages/ef/f6/c15ca8e5646e937c148e147244817672cf920b56ac0bf2cc1512ae674be8/lxml-5.3.1.tar.gz"
+    sha256 "106b7b5d2977b339f1e97efe2778e2ab20e99994cbb0ec5e55771ed0795920c8"
   end
 
   resource "pandas" do
-    url "https://files.pythonhosted.org/packages/3d/85/04c9c049c7f889d3ab161cdb34f15ef23a5e6679f71d3f15d96f2ad2924d/pandas-2.2.2.tar.gz"
-    sha256 "09d8be7dd9e1c4c98224c4dfd38de4920cbd6e144b9dd0d26867386f1ece10d0"
+    url "https://files.pythonhosted.org/packages/88/d9/ecf715f34c73ccb1d8ceb82fc01cd1028a65a5f6dbc57bfa6ea155119058/pandas-2.2.2.tar.gz"
+    sha256 "9e79019aba43cb4fda9e4d983f8e88ca0373adbb697ae9c6c43093218de28b54"
   end
 
   resource "plotly" do
-    url "https://files.pythonhosted.org/packages/5b/44/7437cf71b86b5c8f749623bb578499de1bada4e71fd4dcca0eeae33183ac/plotly-5.23.0.tar.gz"
-    sha256 "d35a57f6789f98db60fff3bd2ca02849378a5610c36fdede78875d602b639a70"
+    url "https://files.pythonhosted.org/packages/db/9e/31b2f0b8f2357cd5f3e992c76c3e4e85a5cbbad8b8c5f23d0684e3f4c608/plotly-5.23.0.tar.gz"
+    sha256 "89e57d003a116303a34de6700862391367dd564222ab71f8531df70279fc0193"
   end
 
   resource "toml" do
@@ -46,8 +46,8 @@ class AvSpex < Formula
   end
 
   resource "PyQt6" do
-    url "https://files.pythonhosted.org/packages/49/8b/7a63162fc9e32d8fd6e71af539c51e793c126ebef84103ef70ef5c0a1ac5/PyQt6-6.7.1.tar.gz"
-    sha256 "5952de970e85e373acb852279590fb0bb12fa4eff0ca4937cefb5e67074c48cf"
+    url "https://files.pythonhosted.org/packages/d1/f9/b0c2ba758b14a7219e076138ea1e738c068bf388e64eee68f3df4fc96f5a/PyQt6-6.7.1.tar.gz"
+    sha256 "3672a82ccd3a62e99ab200a13903421e2928e399fda25ced98d140313ad59cb9"
   end
 
   def install
