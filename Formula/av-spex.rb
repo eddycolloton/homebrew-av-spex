@@ -9,6 +9,8 @@ class AvSpex < Formula
 
   depends_on "python@3.10"
   depends_on "qt@6"
+  depends_on "sip"
+  depends_on "pyqt-builder"
 
   resource "toml" do
     url "https://files.pythonhosted.org/packages/be/ba/1f744cdc819428fc6b5084ec34d9b30660f6f9daaf70eead706e3203ec3c/toml-0.10.2.tar.gz"
@@ -31,6 +33,30 @@ class AvSpex < Formula
   end
 
   def install
+    ENV["MAKEFLAGS"] = "-j#{ENV.make_jobs}"
+    ENV["PYQT6_BINDINGS_LICENSE"] = "yes"
+    ENV["PYQT_FEATURE_LICENSE"] = "GPL"
+    
+    virtualenv_create(libexec, "python3.10")
+    
+    %w[toml setuptools wheel].each do |r|
+      resource(r).stage do
+        system libexec/"bin/pip", "install", "."
+      end
+    end
+
+    system libexec/"bin/pip", "install", "sip", "PyQt-builder"
+    
+    resource("PyQt6").stage do
+      system libexec/"bin/python", "configure.py", 
+             "--confirm-license",
+             "--qmake=#{Formula["qt@6"].opt_bin}/qmake",
+             "--designer-plugindir=#{lib}/qt/plugins/designer",
+             "--qml-plugindir=#{lib}/qt/plugins/PyQt6"
+      system "make"
+      system "make", "install"
+    end
+
     virtualenv_install_with_resources
   end
 
