@@ -30,9 +30,9 @@ class AvSpex < Formula
     
     # Install PyQt6 with config settings
     resource("PyQt6").stage do
-      system libexec/"bin/pip", "install", ".",
-             "--config-settings", "--confirm-license=",
-             "--verbose"
+      system libexec/"bin/pip", "install", "." #,
+            # "--config-settings", "--confirm-license=",
+            # "--verbose"
     end
 
     # Install the main package
