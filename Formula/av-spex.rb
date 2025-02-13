@@ -21,19 +21,10 @@ class AvSpex < Formula
   end
 
   def install
-    python = Formula["python@3.10"].opt_bin/"python3.10"
-
     # Create virtualenv
     venv = virtualenv_create(libexec, python)
     
-    # Install pip into venv
-    system python, "-m", "ensurepip"
-    system python, "-m", "pip", "install", "-v", "--no-deps", "--no-binary", ":all:", "pip"
-
-    # Install toml first
-    resource("toml").stage do
-      system venv.pip_install(Pathname.pwd)
-    end
+    venv.pip_install "toml"
 
     # Install PyQt6 with config settings to handle license
     resource("PyQt6").stage do
@@ -41,7 +32,7 @@ class AvSpex < Formula
     end
 
     # Install the project itself
-    venv.pip_install buildpath
+    venv.pip_install_and_link buildpath
   end
 
   test do
