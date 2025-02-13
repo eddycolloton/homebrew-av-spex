@@ -95,8 +95,11 @@ class AvSpex < Formula
              "--verbose"
     end
       
-    # Create the binary link
-    (bin/"av-spex").write_env_script "#{libexec}/bin/av-spex", PATH: "#{libexec}/bin:$PATH"
+    # Force creation of a new binary link with explicit path
+    (bin/"av-spex").unlink if (bin/"av-spex").exist?
+    (bin/"av-spex").write_env_script "#{libexec}/bin/av-spex", 
+      PATH: "#{libexec}/bin:$PATH",
+      PYTHONPATH: "#{libexec}/lib/python3.10/site-packages:#{ENV["PYTHONPATH"]}"
   end
 
   test do
