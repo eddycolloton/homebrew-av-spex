@@ -59,6 +59,9 @@ class AvSpex < Formula
   def install
     venv = virtualenv_create(libexec, Formula["python@3.12"].opt_bin/"python3.12")
     ENV.prepend_path "PYTHONPATH", Formula["numpy"].opt_prefix/Language::Python.site_packages("python3.12")
+    # First install setuptools and wheel
+    venv.pip_install "setuptools"
+    venv.pip_install "wheel"
     # Install all other dependencies
     venv.pip_install resources
     # Install the package itself
