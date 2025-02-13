@@ -21,9 +21,22 @@ class AvSpex < Formula
   end
 
   def install
-    ENV["PYQT6_BINDINGS_LICENSE"] = "yes"
-    virtualenv_create(libexec, "python3.10")
-    virtualenv_install_with_resources
+    venv = virtualenv_create(libexec, "python3.10")
+    
+    # Install toml first
+    resource("toml").stage do
+      system libexec/"bin/pip", "install", "."
+    end
+    
+    # Install PyQt6 with config settings
+    resource("PyQt6").stage do
+      system libexec/"bin/pip", "install", ".",
+             "--config-settings", "--confirm-license=",
+             "--verbose"
+    end
+
+    # Install the main package
+    venv.pip_install buildpath
   end
 
   test do
