@@ -12,7 +12,11 @@ class AvSpex < Formula
   depends_on "numpy"
   depends_on "cython"
   depends_on "meson"
-  depends_on "meson-python"
+
+  resource "meson-python" do
+    url "https://files.pythonhosted.org/packages/83/50/4a832c9af810a8928739bb51efb1e337849c897d68ba3ff5bb69ac18f180/meson_python-0.13.1.tar.gz"
+    sha256 "c4c575c8a27f51823c3380cdf374b4208f698cef31b2ee387c311c93ef5371cc"
+  end
 
   resource "setuptools" do
     url "https://files.pythonhosted.org/packages/92/ec/089608b791d210aec4e7f97488e67ab0d33add3efccb83a056cbafe3a2a6/setuptools-75.8.0.tar.gz"
@@ -69,6 +73,9 @@ class AvSpex < Formula
     venv.pip_install "wheel"
     venv.pip_install "setuptools"
     venv.pip_install "versioneer[toml]"
+
+    # Install meson-python first
+    venv.pip_install resource("meson-python")
     
     # Install all Python dependencies, excluding system packages
     dependencies = resources.reject { |r| r.name.match?(/^(numpy|PyQt6|meson|Cython)$/) }
