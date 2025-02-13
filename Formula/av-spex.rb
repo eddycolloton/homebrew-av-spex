@@ -57,16 +57,20 @@ class AvSpex < Formula
   end
 
   def install
-    venv = virtualenv_create(libexec, Formula["python@3.10"].opt_bin/"python3.10")
-    ENV.prepend_path "PYTHONPATH", Formula["numpy"].opt_prefix/Language::Python.site_packages("python3.10")
-    # First install setuptools and wheel
+    venv = virtualenv_create(libexec, "python3.10")
+  
+    # Upgrade pip, setuptools, and wheel before installing dependencies
+    venv.pip_install "pip"
     venv.pip_install "setuptools"
     venv.pip_install "wheel"
-    # Install all other dependencies
-    venv.pip_install resources.reject { |r| ["setuptools", "wheel"].include? r.name }
-    # Install the package itself
-    venv.pip_install_and_link buildpath
-  end
+  
+    # Install all Python dependencies, EXCEPT Jupyter-related ones
+    dependencies = resources.reject { |r| r.name.match?(/jupyter|babel/) }
+    venv.pip_install dependencies
+  
+    # Ensure the main package is installed WITHOUT unnecessary dependencies
+    venv.pip_install_and_link buildpath, :build_isolation => false
+  end  
 
   test do
     system bin/"av-spex", "--version"
