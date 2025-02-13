@@ -78,7 +78,7 @@ class AvSpex < Formula
     venv.pip_install resource("meson-python")
     
     # Install all Python dependencies, excluding system packages
-    dependencies = resources.reject { |r| r.name.match?(/^(numpy|PyQt6|meson|Cython)$/) }
+    dependencies = resources.reject { |r| r.name.match?(/^(numpy|PyQt6|meson-python)$/) }
     dependencies.each do |r|
       r.stage do
         venv.pip_install Pathname.pwd
@@ -86,13 +86,14 @@ class AvSpex < Formula
     end
     
     # Install the main package with more explicit flags
-    system "#{libexec}/bin/python", "-m", "pip", "install", ".",
-      "--no-deps",
-      "--ignore-installed",
-      "--prefix=#{libexec}",
-      "--no-binary", ":all:",
-      "--verbose",
-      :dir => buildpath
+    cd buildpath do
+      system "#{libexec}/bin/python", "-m", "pip", "install", ".", 
+             "--no-deps",
+             "--ignore-installed",
+             "--prefix=#{libexec}",
+             "--no-binary", ":all:",
+             "--verbose"
+    end
       
     # Create the binary link
     (bin/"av-spex").write_env_script "#{libexec}/bin/av-spex", PATH: "#{libexec}/bin:$PATH"
