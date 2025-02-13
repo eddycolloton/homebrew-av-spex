@@ -10,6 +10,7 @@ class AvSpex < Formula
   depends_on "python@3.10"
   depends_on "pyqt@6"
   depends_on "numpy"
+  depends_on "cython"
 
   resource "setuptools" do
     url "https://files.pythonhosted.org/packages/92/ec/089608b791d210aec4e7f97488e67ab0d33add3efccb83a056cbafe3a2a6/setuptools-75.8.0.tar.gz"
@@ -58,19 +59,21 @@ class AvSpex < Formula
 
   def install
     venv = virtualenv_create(libexec, "python3.10")
-  
+    
     # Upgrade pip, setuptools, and wheel before installing dependencies
     venv.pip_install "pip"
     venv.pip_install "setuptools"
     venv.pip_install "wheel"
-  
-    # Install all Python dependencies, EXCEPT Jupyter-related ones
-    dependencies = resources.reject { |r| r.name.match?(/jupyter|babel/) }
+    
+    # Install all Python dependencies, excluding system packages
+    dependencies = resources.reject { |r| r.name.match?(/^(numpy|PyQt6)$/) }
     venv.pip_install dependencies
-  
-    # Ensure the main package is installed WITHOUT unnecessary dependencies
-    venv.pip_install_and_link buildpath, :build_isolation => false
-  end  
+    
+    # Install the main package with system-site-packages enabled
+    venv.pip_install_and_link buildpath, 
+      :build_isolation => false,
+      :system_site_packages => true
+  end
 
   test do
     system bin/"av-spex", "--version"
