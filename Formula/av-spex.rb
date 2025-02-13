@@ -64,7 +64,8 @@ class AvSpex < Formula
   end
 
   def install
-    venv = virtualenv_create(libexec, "python3.10")
+    # Create virtualenv with system packages
+    venv = virtualenv_create(libexec, "python3.10", system_site_packages: true)
     
     # Upgrade pip first
     venv.pip_install "pip"
@@ -73,11 +74,11 @@ class AvSpex < Formula
     venv.pip_install "wheel"
     venv.pip_install "setuptools"
     venv.pip_install "versioneer[toml]"
-
+    
     # Install meson-python first
     venv.pip_install resource("meson-python")
     
-    # Install all Python dependencies, excluding system packages
+    # Install remaining Python dependencies
     dependencies = resources.reject { |r| r.name.match?(/^(numpy|PyQt6|meson-python)$/) }
     dependencies.each do |r|
       r.stage do
@@ -85,7 +86,7 @@ class AvSpex < Formula
       end
     end
     
-    # Install the main package with more explicit flags
+    # Install the main package
     cd buildpath do
       system "#{libexec}/bin/python", "-m", "pip", "install", ".", 
              "--no-deps",
@@ -94,12 +95,14 @@ class AvSpex < Formula
              "--no-binary", ":all:",
              "--verbose"
     end
-      
-    # Force creation of a new binary link with explicit path
-    (bin/"av-spex").unlink if (bin/"av-spex").exist?
-    (bin/"av-spex").write_env_script "#{libexec}/bin/av-spex", 
+    
+    # Create the binary link with additional environment variables
+    env = {
       PATH: "#{libexec}/bin:$PATH",
-      PYTHONPATH: "#{libexec}/lib/python3.10/site-packages:#{ENV["PYTHONPATH"]}"
+      PYTHONPATH: "#{libexec}/lib/python3.10/site-packages:#{HOMEBREW_PREFIX}/lib/python3.10/site-packages"
+    }
+    
+    (bin/"av-spex").write_env_script "#{libexec}/bin/av-spex", env
   end
 
   test do
