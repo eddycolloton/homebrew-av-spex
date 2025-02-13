@@ -22,7 +22,7 @@ class AvSpex < Formula
 
   def install
     # Create virtualenv
-    venv = virtualenv_create(libexec, Formula["python@3.10"].opt_bin/"python3")
+    virtualenv = virtualenv_create(libexec, "python3.10")
     
     venv.pip_install "toml"
 
