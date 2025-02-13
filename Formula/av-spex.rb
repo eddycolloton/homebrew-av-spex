@@ -103,8 +103,10 @@ class AvSpex < Formula
       "QT_PLUGIN_PATH" => "#{pyqt}/share/qt/plugins"
     }
   
-    bin.install Dir["#{libexec}/bin/*"]
-    bin.env_script_all_files(libexec/"bin", env)
+    # Only symlink the av-spex executables
+    %w[av-spex av-spex-gui].each do |f|
+      (bin/f).write_env_script(libexec/"bin"/f, env)
+    end
   end
 
   test do
