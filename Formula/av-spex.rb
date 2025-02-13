@@ -64,7 +64,6 @@ class AvSpex < Formula
   end
 
   def install
-    # Create virtualenv with system packages
     venv = virtualenv_create(libexec, "python3.10", system_site_packages: true)
     
     # Upgrade pip first
@@ -74,8 +73,6 @@ class AvSpex < Formula
     venv.pip_install "wheel"
     venv.pip_install "setuptools"
     venv.pip_install "versioneer[toml]"
-    
-    # Install meson-python first
     venv.pip_install resource("meson-python")
     
     # Install remaining Python dependencies
@@ -95,14 +92,19 @@ class AvSpex < Formula
              "--no-binary", ":all:",
              "--verbose"
     end
+  
+    # Create the binary links with environment variables
+    pyqt = Formula["pyqt@6"].opt_prefix
+    site_packages = "#{HOMEBREW_PREFIX}/lib/python3.10/site-packages"
     
-    # Create the binary link with additional environment variables
     env = {
-      PATH: "#{libexec}/bin:$PATH",
-      PYTHONPATH: "#{libexec}/lib/python3.10/site-packages:#{HOMEBREW_PREFIX}/lib/python3.10/site-packages"
+      "PATH" => "#{libexec}/bin:$PATH",
+      "PYTHONPATH" => "#{libexec}/lib/python3.10/site-packages:#{site_packages}:#{pyqt}/lib/python3.10/site-packages",
+      "QT_PLUGIN_PATH" => "#{pyqt}/share/qt/plugins"
     }
-    
-    (bin/"av-spex").write_env_script "#{libexec}/bin/av-spex", env
+  
+    bin.install Dir["#{libexec}/bin/*"]
+    bin.env_script_all_files(libexec/"bin", env)
   end
 
   test do
