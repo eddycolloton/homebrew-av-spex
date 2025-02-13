@@ -76,7 +76,7 @@ class AvSpex < Formula
     venv.pip_install resource("meson-python")
     
     # Install remaining Python dependencies
-    dependencies = resources.reject { |r| r.name.match?(/^(numpy|PyQt6|meson-python)$/) }
+    dependencies = resources
     dependencies.each do |r|
       r.stage do
         venv.pip_install Pathname.pwd
