@@ -75,12 +75,20 @@ class AvSpex < Formula
     venv.pip_install "versioneer[toml]"
     venv.pip_install resource("meson-python")
     
-    # Install remaining Python dependencies
-    dependencies = resources
-    dependencies.each do |r|
+    # Install all resources except PyQt6 first
+    resources.reject { |r| r.name == "PyQt6" }.each do |r|
       r.stage do
         venv.pip_install Pathname.pwd
       end
+    end
+    
+    # Install PyQt6 with license acceptance
+    resource("PyQt6").stage do
+      system "#{libexec}/bin/python", "-m", "pip", "install", ".", 
+             "--config-settings", "license_accepted=yes",
+             "--no-deps",
+             "--ignore-installed",
+             "--prefix=#{libexec}"
     end
     
     # Install the main package
@@ -93,7 +101,7 @@ class AvSpex < Formula
              "--verbose"
     end
   
-    # Create the binary links with environment variables
+    # Rest of the installation remains the same...
     pyqt = Formula["pyqt@6"].opt_prefix
     site_packages = "#{HOMEBREW_PREFIX}/lib/python3.10/site-packages"
     
@@ -103,7 +111,6 @@ class AvSpex < Formula
       "QT_PLUGIN_PATH" => "#{pyqt}/share/qt/plugins"
     }
   
-    # Only symlink the av-spex executables
     %w[av-spex av-spex-gui].each do |f|
       (bin/f).write_env_script(libexec/"bin"/f, env)
     end
