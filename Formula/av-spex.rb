@@ -10,32 +10,37 @@ class AvSpex < Formula
   depends_on "python@3.10"
   depends_on "qt@6"
 
-  resource "PyQt6" do
-    url "https://files.pythonhosted.org/packages/d1/f9/b0c2ba758b14a7219e076138ea1e738c068bf388e64eee68f3df4fc96f5a/PyQt6-6.7.1.tar.gz"
-    sha256 "3672a82ccd3a62e99ab200a13903421e2928e399fda25ced98d140313ad59cb9"
-  end
-
   resource "toml" do
     url "https://files.pythonhosted.org/packages/be/ba/1f744cdc819428fc6b5084ec34d9b30660f6f9daaf70eead706e3203ec3c/toml-0.10.2.tar.gz"
     sha256 "b3bda1d108d5dd99f4a20d24d9c348e91c4db7ab1b749200bded2f839ccbe68f"
   end
 
+  resource "PyQt6" do
+    url "https://files.pythonhosted.org/packages/d1/f9/b0c2ba758b14a7219e076138ea1e738c068bf388e64eee68f3df4fc96f5a/PyQt6-6.7.1.tar.gz"
+    sha256 "3672a82ccd3a62e99ab200a13903421e2928e399fda25ced98d140313ad59cb9"
+  end
+
   def install
-    venv = virtualenv_create(libexec, "python3.10")
+    python = Formula["python@3.10"].opt_bin/"python3.10"
+
+    # Create virtualenv
+    venv = virtualenv_create(libexec, python)
     
+    # Install pip into venv
+    system python, "-m", "ensurepip"
+    system python, "-m", "pip", "install", "-v", "--no-deps", "--no-binary", ":all:", "pip"
+
     # Install toml first
     resource("toml").stage do
-      system libexec/"bin/pip", "install", "."
-    end
-    
-    # Install PyQt6 with config settings
-    resource("PyQt6").stage do
-      system libexec/"bin/pip", "install", "." #,
-            # "--config-settings", "--confirm-license=",
-            # "--verbose"
+      system venv.pip_install(Pathname.pwd)
     end
 
-    # Install the main package
+    # Install PyQt6 with config settings to handle license
+    resource("PyQt6").stage do
+      system venv.pip_install(".", "--config-settings", "--confirm-license=", "--verbose")
+    end
+
+    # Install the project itself
     venv.pip_install buildpath
   end
 
