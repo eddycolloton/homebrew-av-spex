@@ -11,6 +11,8 @@ class AvSpex < Formula
   depends_on "pyqt@6"
   depends_on "numpy"
   depends_on "cython"
+  depends_on "meson"
+  depends_on "meson-python"
 
   resource "setuptools" do
     url "https://files.pythonhosted.org/packages/92/ec/089608b791d210aec4e7f97488e67ab0d33add3efccb83a056cbafe3a2a6/setuptools-75.8.0.tar.gz"
@@ -60,19 +62,33 @@ class AvSpex < Formula
   def install
     venv = virtualenv_create(libexec, "python3.10")
     
-    # Upgrade pip, setuptools, and wheel before installing dependencies
+    # Upgrade pip first
     venv.pip_install "pip"
-    venv.pip_install "setuptools"
+    
+    # Install build dependencies
     venv.pip_install "wheel"
+    venv.pip_install "setuptools"
+    venv.pip_install "versioneer[toml]"
     
     # Install all Python dependencies, excluding system packages
-    dependencies = resources.reject { |r| r.name.match?(/^(numpy|PyQt6)$/) }
-    venv.pip_install dependencies
+    dependencies = resources.reject { |r| r.name.match?(/^(numpy|PyQt6|meson|Cython)$/) }
+    dependencies.each do |r|
+      r.stage do
+        venv.pip_install Pathname.pwd
+      end
+    end
     
-    # Install the main package with system-site-packages enabled
-    venv.pip_install_and_link buildpath, 
-      :build_isolation => false,
-      :system_site_packages => true
+    # Install the main package with more explicit flags
+    system "#{libexec}/bin/python", "-m", "pip", "install", ".",
+      "--no-deps",
+      "--ignore-installed",
+      "--prefix=#{libexec}",
+      "--no-binary", ":all:",
+      "--verbose",
+      :dir => buildpath
+      
+    # Create the binary link
+    (bin/"av-spex").write_env_script "#{libexec}/bin/av-spex", PATH: "#{libexec}/bin:$PATH"
   end
 
   test do
