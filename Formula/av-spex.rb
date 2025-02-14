@@ -7,6 +7,9 @@ class AvSpex < Formula
   sha256 "03fb3eb9db64655a5f88db5ebbc1002b2ee857ff71853f1e79d52e4ff68d5b4b"
   license "GPL-3.0-only"
 
+  # Declare this formula as keg-only
+  keg_only "contains its own Python environment"
+
   depends_on "python@3.10"
 
   resource "setuptools" do
@@ -45,18 +48,17 @@ class AvSpex < Formula
     # Install all Python dependencies except PyQt
     venv.pip_install resources.reject { |r| r.name == "PyQt6" }
     
-    # Install PyQt6 with license acceptance and explicitly exclude SQL modules
+    # Install PyQt6 with license acceptance
     system libexec/"bin/python", "-m", "pip", "install", 
            "PyQt6", "--config-settings", "--confirm-license=",
-           "--config-settings", "qmake_settings=QMAKE_LFLAGS_PLUGIN=-Wl,-dead_strip",
-           "--config-settings", "disable_features=SqlDatabase",
            "--verbose"
 
     # Install the project itself but handle linking separately
     venv.pip_install buildpath
     
-    # Explicitly create the links to av-spex files once everything is installed
-    bin.install_symlink Dir[libexec/"bin/av-spex*"]
+    # Explicitly install only our application binaries
+    (bin/"av-spex").write_env_script(libexec/"bin/av-spex", PYTHONPATH: ENV["PYTHONPATH"])
+    (bin/"av-spex-gui").write_env_script(libexec/"bin/av-spex-gui", PYTHONPATH: ENV["PYTHONPATH"])
 end
 
   test do
