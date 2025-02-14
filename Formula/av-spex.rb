@@ -70,7 +70,6 @@ class AvSpex < Formula
       :PYTHONPATH => "#{libexec}/lib/python3.10/site-packages:$PYTHONPATH"
     )
   end
-end
 
   test do
     system bin/"av-spex", "--version"
