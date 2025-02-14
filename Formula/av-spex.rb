@@ -38,7 +38,6 @@ class AvSpex < Formula
 
     # Install PyQt6 with license acceptance
     system "python3.10", "-m", "pip", "install", "PyQt6", "--config-settings", "--confirm-license=", "--verbose"
-    end
 
     # Install the project itself
     venv.pip_install_and_link buildpath
