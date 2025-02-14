@@ -44,11 +44,22 @@ class AvSpex < Formula
     # Install PyQt6 separately inside the venv
     system libexec/"bin/python", "-m", "pip", "install", "PyQt6", "--config-settings", "--confirm-license="
 
-    # Install the project itself
-    venv.pip_install_and_link buildpath
+    # Install AV_Spex manually into the venv
+    system libexec/"bin/python", "-m", "pip", "install", "--no-deps", buildpath
 
-    # Manually link the executable so Brew recognizes it
-    bin.install_symlink libexec/"bin/av-spex"
+    # Create wrappers for executables instead of linking directly
+    (bin/"av-spex").write <<~EOS
+      #!/bin/bash
+      exec "#{libexec}/bin/python" -m av_spex "$@"
+    EOS
+    (bin/"av-spex-gui").write <<~EOS
+      #!/bin/bash
+      exec "#{libexec}/bin/python" -m av_spex.gui "$@"
+    EOS
+
+    # Make scripts executable
+    chmod 0755, bin/"av-spex"
+    chmod 0755, bin/"av-spex-gui"
   end
 
   test do
