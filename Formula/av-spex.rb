@@ -43,20 +43,8 @@ class AvSpex < Formula
     # Create virtualenv
     venv = virtualenv_create(libexec, "python3.10")
 
-    venv.pip_install "setuptools"
-    
-    venv.pip_install "toml"
-
-    venv.pip_install "art"
-
-    venv.pip_install "colorlog"
-
-    venv.pip_install "appdirs"
-
-    # Install PyQt6 with license acceptance
-    system libexec/"bin/python", "-m", "pip", "install", 
-           "PyQt6", "--config-settings", "--confirm-license=",
-           "--verbose"
+    # Install all dependencies from resources
+    venv.pip_install resources
 
     # Install the project itself
     venv.pip_install_and_link buildpath
