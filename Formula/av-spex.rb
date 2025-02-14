@@ -34,10 +34,10 @@ class AvSpex < Formula
     
     venv.pip_install "toml"
 
-    system "python3.10", "-m", "pip", "install", "--no-deps", "PyQt6-sip"
-
     # Install PyQt6 with license acceptance
-    system "python3.10", "-m", "pip", "install", "PyQt6", "--config-settings", "--confirm-license=", "--verbose"
+    system libexec/"bin/python", "-m", "pip", "install", 
+           "PyQt6", "--config-settings", "--confirm-license=",
+           "--verbose"
 
     # Install the project itself
     venv.pip_install_and_link buildpath
