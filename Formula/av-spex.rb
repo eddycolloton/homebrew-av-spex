@@ -34,29 +34,29 @@ class AvSpex < Formula
     sha256 "7d5d0167b2b1ba821647616af46a749d1c653740dd0d2415100fe26e27afdf41"
   end
 
+  resource "PyQt6" do
+    url "https://files.pythonhosted.org/packages/d1/f9/b0c2ba758b14a7219e076138ea1e738c068bf388e64eee68f3df4fc96f5a/PyQt6-6.7.1.tar.gz"
+    sha256 "3672a82ccd3a62e99ab200a13903421e2928e399fda25ced98d140313ad59cb9"
+  end
+
   def install
     # Create virtualenv
     venv = virtualenv_create(libexec, "python3.10")
-  
-    # Install all Python dependencies except PyQt6
+
+    # Install all Python dependencies except PyQt
     venv.pip_install resources.reject { |r| r.name == "PyQt6" }
-  
-    # Symlink PyQt6 from Homebrew into the virtual environment
-    site_packages = Language::Python.site_packages("python3.10")
-    pyqt_site_packages = Formula["pyqt"].opt_libexec/site_packages
-    ln_sf pyqt_site_packages, libexec/site_packages
-  
-    # Install the package itself inside the virtualenv
+    
+    # Install PyQt6 with license acceptance
+    system libexec/"bin/python", "-m", "pip", "install", 
+           "PyQt6", "--config-settings", "--confirm-license=",
+           "--verbose"
+
+    # Install the project itself
     venv.pip_install_and_link buildpath
-  
-    # Ensure the wrapper scripts correctly set PYTHONPATH to find PyQt6
-    env = { PYTHONPATH: "#{pyqt_site_packages}:#{libexec/site_packages}" }
-    (bin/"av-spex").write_env_script libexec/"bin/av-spex", env
-    (bin/"av-spex-gui").write_env_script libexec/"bin/av-spex-gui", env
   end
-  
 
   test do
     system bin/"av-spex", "--version"
+  end
   end
 end
