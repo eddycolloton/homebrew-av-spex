@@ -32,22 +32,26 @@ class AvSpex < Formula
   end
 
   def install
-    # Create virtualenv
     venv = virtualenv_create(libexec, "python3.10")
-
-    venv.pip_install "setuptools"
     
-    venv.pip_install "toml"
-
-    venv.pip_install "art"
-
-    # Install PyQt6 with license acceptance
-    system libexec/"bin/python", "-m", "pip", "install", 
-           "PyQt6", "--config-settings", "--confirm-license=",
-           "--verbose"
-
+    resources.each do |r|
+      r.stage do
+        # Special handling for PyQt6
+        if r.name == "PyQt6"
+          system libexec/"bin/python", "-m", "pip", "install", ".",
+                 "--config-settings", "--confirm-license=",
+                 "--verbose"
+        else
+          venv.pip_install Pathname.pwd
+        end
+      end
+    end
+  
     # Install the project itself
     venv.pip_install_and_link buildpath
+  
+    # Ensure the binary has the correct shebang
+    bin.env_script_all_files(libexec/"bin", PATH: "#{libexec}/bin:$PATH")
   end
 
   test do
