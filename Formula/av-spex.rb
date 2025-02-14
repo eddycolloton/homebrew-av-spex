@@ -9,6 +9,7 @@ class AvSpex < Formula
 
   depends_on "python@3.10"
   depends_on "qt@6"
+  depends_on "pyqt@6"
 
   resource "setuptools" do
     url "https://files.pythonhosted.org/packages/92/ec/089608b791d210aec4e7f97488e67ab0d33add3efccb83a056cbafe3a2a6/setuptools-75.8.0.tar.gz"
@@ -33,13 +34,8 @@ class AvSpex < Formula
     
     venv.pip_install "toml"
 
-    # Set PyQt6 build environment variables
-    ENV["PYQT_CONF"] = "{\"confirm_license\": true}"
-
     # Install PyQt6
-    resource("PyQt6").stage do
-      system venv.pip_install_and_link_files.first, "."
-    end
+    venv.pip_install "PyQt6"
 
     # Install the project itself
     venv.pip_install_and_link buildpath
