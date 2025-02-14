@@ -37,30 +37,24 @@ class AvSpex < Formula
   def install
     # Create virtualenv
     venv = virtualenv_create(libexec, "python3.10")
-
-    # Install dependencies excluding PyQt6
-    venv.pip_install resources
-
-    # Install PyQt6 separately inside the venv
-    system libexec/"bin/python", "-m", "pip", "install", "PyQt6", "--config-settings", "--confirm-license="
-
-    # Install AV_Spex manually into the venv
-    system libexec/"bin/python", "-m", "pip", "install", "--no-deps", buildpath
-
-    # Create wrappers for executables instead of linking directly
-    (bin/"av-spex").write <<~EOS
-      #!/bin/bash
-      exec "#{libexec}/bin/python" -m av_spex "$@"
-    EOS
-    (bin/"av-spex-gui").write <<~EOS
-      #!/bin/bash
-      exec "#{libexec}/bin/python" -m av_spex.gui "$@"
-    EOS
-
-    # Make scripts executable
-    chmod 0755, bin/"av-spex"
-    chmod 0755, bin/"av-spex-gui"
+  
+    # Install all Python dependencies except PyQt6
+    venv.pip_install resources.reject { |r| r.name == "PyQt6" }
+  
+    # Symlink PyQt6 from Homebrew into the virtual environment
+    site_packages = Language::Python.site_packages("python3.10")
+    pyqt_site_packages = Formula["pyqt"].opt_libexec/site_packages
+    ln_sf pyqt_site_packages, libexec/site_packages
+  
+    # Install the package itself inside the virtualenv
+    venv.pip_install_and_link buildpath
+  
+    # Ensure the wrapper scripts correctly set PYTHONPATH to find PyQt6
+    env = { PYTHONPATH: "#{pyqt_site_packages}:#{libexec/site_packages}" }
+    (bin/"av-spex").write_env_script libexec/"bin/av-spex", env
+    (bin/"av-spex-gui").write_env_script libexec/"bin/av-spex-gui", env
   end
+  
 
   test do
     system bin/"av-spex", "--version"
