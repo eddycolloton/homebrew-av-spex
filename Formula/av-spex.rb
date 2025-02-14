@@ -45,7 +45,7 @@ class AvSpex < Formula
 
     # Install all Python dependencies except PyQt
     venv.pip_install resources.reject { |r| r.name == "PyQt6" }
-    
+
     # Install PyQt6 with license acceptance
     system libexec/"bin/python", "-m", "pip", "install", 
            "PyQt6", "--config-settings", "--confirm-license=",
@@ -58,3 +58,4 @@ class AvSpex < Formula
   test do
     system bin/"av-spex", "--version"
   end
+end
