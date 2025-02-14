@@ -46,13 +46,12 @@ class AvSpex < Formula
     site_packages = libexec/Language::Python.site_packages("python3.10")
     pyqt_site_packages = Formula["pyqt"].opt_lib/Language::Python.site_packages("python3.10")
   
-    # Add Homebrew PyQt to PYTHONPATH
-    env = { PYTHONPATH: "#{pyqt_site_packages}:#{site_packages}" }
+    # Modify PYTHONPATH to include Homebrew's PyQt
+    ENV.prepend_path "PYTHONPATH", pyqt_site_packages
   
     # Install the project itself
-    venv.pip_install_and_link buildpath, env: env
-  end
-  
+    venv.pip_install_and_link buildpath
+  end  
 
   test do
     system bin/"av-spex", "--version"
