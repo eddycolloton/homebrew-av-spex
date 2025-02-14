@@ -38,18 +38,21 @@ class AvSpex < Formula
   def install
     # Create virtualenv
     venv = virtualenv_create(libexec, "python3.10")
-
+  
     # Install all Python dependencies except PyQt
     venv.pip_install resources.reject { |r| r.name == "PyQt6" }
-
-    # Symlink Homebrew PyQt into the virtual environment
+  
+    # Ensure the system-installed PyQt is available inside the virtual environment
     site_packages = libexec/Language::Python.site_packages("python3.10")
-    pyqt_path = Formula["pyqt"].opt_libexec/Language::Python.site_packages("python3.10")
-    ln_sf pyqt_path, site_packages
-
+    pyqt_site_packages = Formula["pyqt"].opt_lib/Language::Python.site_packages("python3.10")
+  
+    # Add Homebrew PyQt to PYTHONPATH
+    env = { PYTHONPATH: "#{pyqt_site_packages}:#{site_packages}" }
+  
     # Install the project itself
-    venv.pip_install_and_link buildpath
+    venv.pip_install_and_link buildpath, env: env
   end
+  
 
   test do
     system bin/"av-spex", "--version"
