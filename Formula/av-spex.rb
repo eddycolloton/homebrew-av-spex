@@ -51,6 +51,8 @@ class AvSpex < Formula
 
     venv.pip_install "colorlog"
 
+    venv.pip_install "appdirs"
+
     # Install PyQt6 with license acceptance
     system libexec/"bin/python", "-m", "pip", "install", 
            "PyQt6", "--config-settings", "--confirm-license=",
