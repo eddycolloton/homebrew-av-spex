@@ -33,19 +33,13 @@ class AvSpex < Formula
     
     venv.pip_install "toml"
 
-    # Create a temporary pyproject.toml to configure PyQt6 build
-    pyproject = Pathname.new("pyproject.toml")
-    pyproject.write <<~EOS
-      [tool.sip.project]
-      sip-include-dirs = []
-      
-      [tool.sip.bindings.PyQt6]
-      license-type = "GPL"
-      license-accepted = true
-    EOS
+    # Set PyQt6 build environment variables
+    ENV["PYQT_CONF"] = "{\"confirm_license\": true}"
 
-    # Install PyQt6 with the temporary config
-    system libexec/"bin/python", "-m", "pip", "install", "PyQt6"
+    # Install PyQt6
+    resource("PyQt6").stage do
+      system venv.pip_install_and_link_files.first, "."
+    end
 
     # Install the project itself
     venv.pip_install_and_link buildpath
