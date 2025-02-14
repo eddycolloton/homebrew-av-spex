@@ -33,6 +33,12 @@ class AvSpex < Formula
     
     venv.pip_install "toml"
 
+    # Set environment variables to point to Homebrew's Qt6
+    ENV["QMAKE"] = Formula["qt@6"].opt_bin/"qmake"
+    ENV.append_path "PATH", Formula["qt@6"].opt_bin.to_s
+    ENV.append "LDFLAGS", "-Wl,-rpath,#{Formula["qt@6"].opt_lib}"
+    ENV["QT_PLUGIN_PATH"] = "#{Formula["qt@6"].opt_lib}/qt/plugins"
+
     # Install PyQt6 with config settings
     venv.pip_install ["PyQt6", "--config-settings", "--confirm-license=", "--verbose"]
 
