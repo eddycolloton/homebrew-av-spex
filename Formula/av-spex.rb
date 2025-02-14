@@ -33,8 +33,16 @@ class AvSpex < Formula
     
     venv.pip_install "toml"
 
-    # Install PyQt6 with license confirmation using environment variables
-    ENV["PYQT_CONF"] = "{\"confirm_license\": true}"
+    # Create pyqt.cfg file in the virtualenv
+    (libexec/"pyqt.cfg").write <<~EOS
+      [PyQt]
+      license-accepted=yes
+    EOS
+
+    # Set PYQT_CONFIG_PATH to point to our config file
+    ENV["PYQT_CONFIG_PATH"] = "#{libexec}/pyqt.cfg"
+    
+    # Install PyQt6
     venv.pip_install resource("PyQt6")
 
     # Install the project itself
