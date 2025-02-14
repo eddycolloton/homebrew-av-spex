@@ -40,22 +40,22 @@ class AvSpex < Formula
   end
 
   def install
-    # Create virtualenv
     venv = virtualenv_create(libexec, "python3.10")
 
     # Install all Python dependencies except PyQt
     venv.pip_install resources.reject { |r| r.name == "PyQt6" }
     
     # Install PyQt6 with license acceptance
-    resource("PyQt6").stage do
-      system libexec/"bin/python", "-m", "pip", "install", ".",
-             "--config-settings", "--confirm-license=",
-             "--verbose"
-    end
+    system libexec/"bin/python", "-m", "pip", "install", 
+           "PyQt6", "--config-settings", "--confirm-license=",
+           "--verbose"
 
-    # Install the project itself
-    venv.pip_install_and_link buildpath
-  end
+    # Install the project itself but handle linking separately
+    venv.pip_install buildpath
+    
+    # Explicitly create the links after everything is installed
+    bin.install_symlink Dir[libexec/"bin/*"]
+end
 
   test do
     system bin/"av-spex", "--version"
