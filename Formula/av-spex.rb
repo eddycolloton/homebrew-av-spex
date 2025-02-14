@@ -45,11 +45,11 @@ class AvSpex < Formula
     # Install all Python dependencies except PyQt
     venv.pip_install resources.reject { |r| r.name == "PyQt6" }
     
-    # Install PyQt6 with license acceptance
+    # Install PyQt6 with license acceptance and explicitly exclude SQL modules
     system libexec/"bin/python", "-m", "pip", "install", 
-           "PyQt6", "--config-settings", "--confirm-license=", 
-           "--config-settings", "psql=no",
-           "--config-settings", "iodbc=no",
+           "PyQt6", "--config-settings", "--confirm-license=",
+           "--config-settings", "qmake_settings=QMAKE_LFLAGS_PLUGIN=-Wl,-dead_strip",
+           "--config-settings", "disable_features=SqlDatabase",
            "--verbose"
 
     # Install the project itself but handle linking separately
