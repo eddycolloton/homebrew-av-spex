@@ -47,7 +47,9 @@ class AvSpex < Formula
     
     # Install PyQt6 with license acceptance
     system libexec/"bin/python", "-m", "pip", "install", 
-           "PyQt6", "--config-settings", "--confirm-license=",
+           "PyQt6", "--config-settings", "--confirm-license=", 
+           "--config-settings", "psql=no",
+           "--config-settings", "iodbc=no",
            "--verbose"
 
     # Install the project itself but handle linking separately
