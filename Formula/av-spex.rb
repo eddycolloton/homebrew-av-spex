@@ -8,7 +8,6 @@ class AvSpex < Formula
   license "GPL-3.0-only"
 
   depends_on "python@3.10"
-  depends_on "pyqt@6"
 
   resource "setuptools" do
     url "https://files.pythonhosted.org/packages/92/ec/089608b791d210aec4e7f97488e67ab0d33add3efccb83a056cbafe3a2a6/setuptools-75.8.0.tar.gz"
@@ -35,28 +34,27 @@ class AvSpex < Formula
     sha256 "7d5d0167b2b1ba821647616af46a749d1c653740dd0d2415100fe26e27afdf41"
   end
 
+  resource "PyQt6" do
+    url "https://files.pythonhosted.org/packages/d1/f9/b0c2ba758b14a7219e076138ea1e738c068bf388e64eee68f3df4fc96f5a/PyQt6-6.7.1.tar.gz"
+    sha256 "3672a82ccd3a62e99ab200a13903421e2928e399fda25ced98d140313ad59cb9"
+  end
+
   def install
     # Create virtualenv
     venv = virtualenv_create(libexec, "python3.10")
-  
+
     # Install all Python dependencies except PyQt
     venv.pip_install resources.reject { |r| r.name == "PyQt6" }
-  
-    # Ensure the system-installed PyQt is available inside the virtual environment
-    site_packages = libexec/Language::Python.site_packages("python3.10")
-    pyqt_site_packages = Formula["pyqt"].opt_lib/Language::Python.site_packages("python3.10")
-  
-    # Modify PYTHONPATH to include Homebrew's PyQt
-    ENV.prepend_path "PYTHONPATH", pyqt_site_packages
-  
+    
+    # Install PyQt6 with license acceptance
+    system libexec/"bin/python", "-m", "pip", "install", 
+           "PyQt6", "--config-settings", "--confirm-license=",
+           "--verbose"
+
     # Install the project itself
     venv.pip_install_and_link buildpath
-
-    # Patch the wrapper script to include PYTHONPATH at runtime
-    (bin/"av-spex").write_env_script libexec/"bin/av-spex", PYTHONPATH: pyqt_site_packages
-  end  
+  end
 
   test do
     system bin/"av-spex", "--version"
   end
-end
