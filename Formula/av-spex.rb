@@ -34,15 +34,14 @@ class AvSpex < Formula
     
     venv.pip_install "toml"
 
-    # Install PyQt6 with license acceptance using environment variables
-    ENV["QTDIR"] = Formula["qt@6"].opt_prefix
-    ENV["QT_PLUGIN_PATH"] = "#{Formula["qt@6"].opt_prefix}/plugins"
-    ENV["DYLD_FRAMEWORK_PATH"] = "#{Formula["qt@6"].opt_prefix}/lib"
-    ENV["PATH"] = "#{Formula["qt@6"].opt_bin}:#{ENV["PATH"]}"
-    ENV["PYTHONPATH"] = "#{libexec}/lib/python3.10/site-packages"
-    
     system "python3.10", "-m", "pip", "install", "--no-deps", "PyQt6-sip"
-    system "python3.10", "-m", "pip", "install", "--no-deps", "--config-settings", "confirm-license=1", resource("PyQt6").cached_download
+
+    # Install PyQt6 with license acceptance
+    resource("PyQt6").stage do
+      system "sip-install", "--confirm-license",
+                           "--target-dir", "#{libexec}/lib/python3.10/site-packages",
+                           "--qmake", Formula["qt@6"].opt_bin/"qmake6"
+    end
 
     # Install the project itself
     venv.pip_install_and_link buildpath
