@@ -51,6 +51,9 @@ class AvSpex < Formula
   
     # Install the project itself
     venv.pip_install_and_link buildpath
+
+    # Patch the wrapper script to include PYTHONPATH at runtime
+    (bin/"av-spex").write_env_script libexec/"bin/av-spex", PYTHONPATH: pyqt_site_packages
   end  
 
   test do
