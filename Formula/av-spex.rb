@@ -53,8 +53,8 @@ class AvSpex < Formula
     # Install the project itself but handle linking separately
     venv.pip_install buildpath
     
-    # Explicitly create the links after everything is installed
-    bin.install_symlink Dir[libexec/"bin/*"]
+    # Explicitly create the links to av-spex files once everything is installed
+    bin.install_symlink Dir[libexec/"bin/av-spex*"]
 end
 
   test do
