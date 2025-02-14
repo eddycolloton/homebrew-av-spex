@@ -34,25 +34,21 @@ class AvSpex < Formula
     sha256 "7d5d0167b2b1ba821647616af46a749d1c653740dd0d2415100fe26e27afdf41"
   end
 
-  resource "PyQt6" do
-    url "https://files.pythonhosted.org/packages/d1/f9/b0c2ba758b14a7219e076138ea1e738c068bf388e64eee68f3df4fc96f5a/PyQt6-6.7.1.tar.gz"
-    sha256 "3672a82ccd3a62e99ab200a13903421e2928e399fda25ced98d140313ad59cb9"
-  end
-
   def install
     # Create virtualenv
     venv = virtualenv_create(libexec, "python3.10")
 
-    # Install all Python dependencies except PyQt
-    venv.pip_install resources.reject { |r| r.name == "PyQt6" }
+    # Install dependencies excluding PyQt6
+    venv.pip_install resources
 
-    # Install PyQt6 with license acceptance
-    system libexec/"bin/python", "-m", "pip", "install", 
-           "PyQt6", "--config-settings", "--confirm-license=",
-           "--verbose"
+    # Install PyQt6 separately inside the venv
+    system libexec/"bin/python", "-m", "pip", "install", "PyQt6", "--config-settings", "--confirm-license="
 
     # Install the project itself
     venv.pip_install_and_link buildpath
+
+    # Manually link the executable so Brew recognizes it
+    bin.install_symlink libexec/"bin/av-spex"
   end
 
   test do
