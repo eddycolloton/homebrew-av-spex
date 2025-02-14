@@ -10,8 +10,7 @@ class AvSpex < Formula
   # Declare this formula as keg-only
   keg_only "contains its own Python environment"
 
-  depends_on "python@3.10"
-  depends_on "qt" => :build
+  depends_on "python@3.10" => :build
 
   resource "setuptools" do
     url "https://files.pythonhosted.org/packages/92/ec/089608b791d210aec4e7f97488e67ab0d33add3efccb83a056cbafe3a2a6/setuptools-75.8.0.tar.gz"
@@ -44,34 +43,36 @@ class AvSpex < Formula
   end
 
   def install
+    # Force python not to find system packages
+    ENV["PYTHONNOUSERSITE"] = "1"
+    
     venv = virtualenv_create(libexec, "python3.10")
-
-    # Install all Python dependencies except PyQt
     venv.pip_install resources.reject { |r| r.name == "PyQt6" }
     
-    # Set environment variables to prevent SQL plugins
-    ENV["QMAKE_LFLAGS_PLUGIN"] = "-Wl,-dead_strip"
-    ENV["DISABLE_SQL"] = "1"
-    
-    system libexec/"bin/python", "-m", "pip", "install", 
-           "PyQt6", "--config-settings", "--confirm-license=",
+    # Install PyQt6 directly into virtualenv with specific isolation flags
+    system libexec/"bin/python", "-m", "pip", "install",
+           "--no-deps",  # Don't check dependencies
+           "--isolated",  # Isolate from system packages
+           "PyQt6", 
+           "--config-settings", "--confirm-license=",
            "--verbose"
 
     venv.pip_install buildpath
     
-    # Create standalone executables
+    # Create executables with strict virtualenv paths
     (bin/"av-spex").write_env_script(libexec/"bin/av-spex", 
-      :PATH => "#{libexec}/bin:$PATH",
-      :PYTHONPATH => "#{libexec}/lib/python3.10/site-packages:$PYTHONPATH"
+      :PYTHONPATH => "#{libexec}/lib/python3.10/site-packages",
+      :PYTHONNOUSERSITE => "1"
     )
     
     (bin/"av-spex-gui").write_env_script(libexec/"bin/av-spex-gui",
-      :PATH => "#{libexec}/bin:$PATH",
-      :PYTHONPATH => "#{libexec}/lib/python3.10/site-packages:$PYTHONPATH"
+      :PYTHONPATH => "#{libexec}/lib/python3.10/site-packages",
+      :PYTHONNOUSERSITE => "1"
     )
   end
 
   test do
-    system bin/"av-spex", "--version"
+    # Test with isolation flags
+    system "env", "PYTHONNOUSERSITE=1", bin/"av-spex", "--version"
   end
 end
