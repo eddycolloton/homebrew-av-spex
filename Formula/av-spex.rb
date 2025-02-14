@@ -47,9 +47,11 @@ class AvSpex < Formula
     venv.pip_install resources.reject { |r| r.name == "PyQt6" }
     
     # Install PyQt6 with license acceptance
-    system libexec/"bin/python", "-m", "pip", "install", 
-           "PyQt6", "--config-settings", "--confirm-license=",
-           "--verbose"
+    resource("PyQt6").stage do
+      system libexec/"bin/python", "-m", "pip", "install", ".",
+             "--config-settings", "--confirm-license=",
+             "--verbose"
+    end
 
     # Install the project itself
     venv.pip_install_and_link buildpath
