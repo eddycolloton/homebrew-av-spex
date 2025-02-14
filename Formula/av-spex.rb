@@ -8,8 +8,6 @@ class AvSpex < Formula
   license "GPL-3.0-only"
 
   depends_on "python@3.10"
-  depends_on "qt@6"
-  depends_on "pyqt@6"
 
   resource "setuptools" do
     url "https://files.pythonhosted.org/packages/92/ec/089608b791d210aec4e7f97488e67ab0d33add3efccb83a056cbafe3a2a6/setuptools-75.8.0.tar.gz"
@@ -32,26 +30,22 @@ class AvSpex < Formula
   end
 
   def install
+    # Create virtualenv
     venv = virtualenv_create(libexec, "python3.10")
+
+    venv.pip_install "setuptools"
     
-    resources.each do |r|
-      r.stage do
-        # Special handling for PyQt6
-        if r.name == "PyQt6"
-          system libexec/"bin/python", "-m", "pip", "install", ".",
-                 "--config-settings", "--confirm-license=",
-                 "--verbose"
-        else
-          venv.pip_install Pathname.pwd
-        end
-      end
-    end
-  
+    venv.pip_install "toml"
+
+    venv.pip_install "art"
+
+    # Install PyQt6 with license acceptance
+    system libexec/"bin/python", "-m", "pip", "install", 
+           "PyQt6", "--config-settings", "--confirm-license=",
+           "--verbose"
+
     # Install the project itself
     venv.pip_install_and_link buildpath
-  
-    # Ensure the binary has the correct shebang
-    bin.env_script_all_files(libexec/"bin", PATH: "#{libexec}/bin:$PATH")
   end
 
   test do
