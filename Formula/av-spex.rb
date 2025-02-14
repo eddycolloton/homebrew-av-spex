@@ -37,10 +37,7 @@ class AvSpex < Formula
     system "python3.10", "-m", "pip", "install", "--no-deps", "PyQt6-sip"
 
     # Install PyQt6 with license acceptance
-    resource("PyQt6").stage do
-      system "sip-install", "--confirm-license",
-                           "--target-dir", "#{libexec}/lib/python3.10/site-packages",
-                           "--qmake", Formula["qt@6"].opt_bin/"qmake6"
+    system "python3.10", "-m", "pip", "install", "PyQt6", "--config-settings", "--confirm-license=", "--verbose"
     end
 
     # Install the project itself
