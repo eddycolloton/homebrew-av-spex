@@ -34,8 +34,12 @@ class AvSpex < Formula
     
     venv.pip_install "toml"
 
-    # Install PyQt6
-    venv.pip_install "PyQt6"
+    # Install PyQt6 with license acceptance
+    resource("PyQt6").stage do
+      system "sip-install", "--confirm-license",
+                           "--target-dir", "#{libexec}/lib/python3.10/site-packages",
+                           "--qmake", Formula["qt@6"].opt_bin/"qmake6"
+    end
 
     # Install the project itself
     venv.pip_install_and_link buildpath
