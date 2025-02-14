@@ -58,5 +58,4 @@ class AvSpex < Formula
   test do
     system bin/"av-spex", "--version"
   end
-  end
 end
