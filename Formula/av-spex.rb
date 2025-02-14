@@ -11,6 +11,7 @@ class AvSpex < Formula
   keg_only "contains its own Python environment"
 
   depends_on "python@3.10"
+  depends_on "qt" => :build
 
   resource "setuptools" do
     url "https://files.pythonhosted.org/packages/92/ec/089608b791d210aec4e7f97488e67ab0d33add3efccb83a056cbafe3a2a6/setuptools-75.8.0.tar.gz"
@@ -48,17 +49,27 @@ class AvSpex < Formula
     # Install all Python dependencies except PyQt
     venv.pip_install resources.reject { |r| r.name == "PyQt6" }
     
-    # Install PyQt6 with license acceptance
+    # Set environment variables to prevent SQL plugins
+    ENV["QMAKE_LFLAGS_PLUGIN"] = "-Wl,-dead_strip"
+    ENV["DISABLE_SQL"] = "1"
+    
     system libexec/"bin/python", "-m", "pip", "install", 
            "PyQt6", "--config-settings", "--confirm-license=",
            "--verbose"
 
-    # Install the project itself but handle linking separately
     venv.pip_install buildpath
     
-    # Explicitly install only our application binaries
-    (bin/"av-spex").write_env_script(libexec/"bin/av-spex", PYTHONPATH: ENV["PYTHONPATH"])
-    (bin/"av-spex-gui").write_env_script(libexec/"bin/av-spex-gui", PYTHONPATH: ENV["PYTHONPATH"])
+    # Create standalone executables
+    (bin/"av-spex").write_env_script(libexec/"bin/av-spex", 
+      :PATH => "#{libexec}/bin:$PATH",
+      :PYTHONPATH => "#{libexec}/lib/python3.10/site-packages:$PYTHONPATH"
+    )
+    
+    (bin/"av-spex-gui").write_env_script(libexec/"bin/av-spex-gui",
+      :PATH => "#{libexec}/bin:$PATH",
+      :PYTHONPATH => "#{libexec}/lib/python3.10/site-packages:$PYTHONPATH"
+    )
+  end
 end
 
   test do
