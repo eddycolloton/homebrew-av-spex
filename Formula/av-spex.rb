@@ -21,6 +21,11 @@ class AvSpex < Formula
     sha256 "b3bda1d108d5dd99f4a20d24d9c348e91c4db7ab1b749200bded2f839ccbe68f"
   end
 
+  resource "art" do
+    url "https://files.pythonhosted.org/packages/b6/15/6c4ac6bf544a01230bad5b45ce4f624051b9dc9567875da05cfdbfc2cafa/art-6.1.tar.gz"
+    sha256 "6ab3031e3b7710039e73497b0e750cadfe04d4c1279ce3a123500dbafb9e1b64"
+  end
+
   resource "PyQt6" do
     url "https://files.pythonhosted.org/packages/d1/f9/b0c2ba758b14a7219e076138ea1e738c068bf388e64eee68f3df4fc96f5a/PyQt6-6.7.1.tar.gz"
     sha256 "3672a82ccd3a62e99ab200a13903421e2928e399fda25ced98d140313ad59cb9"
@@ -33,6 +38,8 @@ class AvSpex < Formula
     venv.pip_install "setuptools"
     
     venv.pip_install "toml"
+
+    venv.pip_install "art"
 
     # Install PyQt6 with license acceptance
     system libexec/"bin/python", "-m", "pip", "install", 
