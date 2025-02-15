@@ -13,7 +13,7 @@ class AvSpex < Formula
   depends_on "ninja" => :build # needed for pandas
   ## Adding dependencies for pandas runtime here:
   depends_on "numpy"
-  depends_on "dateutil"
+  depends_on "python-dateutil"
   
   resource "setuptools" do # needed for pyqt6 
     url "https://files.pythonhosted.org/packages/92/ec/089608b791d210aec4e7f97488e67ab0d33add3efccb83a056cbafe3a2a6/setuptools-75.8.0.tar.gz"
