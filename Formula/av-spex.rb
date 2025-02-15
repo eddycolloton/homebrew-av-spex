@@ -69,7 +69,7 @@ class AvSpex < Formula
     system libexec/"bin/python", "-m", "pip", "install", "--no-deps", "--only-binary", ":all:", "plotly==5.23.0"
     
     # Install all Python dependencies including PyQt6-sip but excluding PyQt6
-    venv.pip_install resources.reject { |r| r.name == "PyQt6" && r.name == "plotly" }
+    venv.pip_install resources.reject { |r| r.name == "PyQt6" || r.name == "plotly" }
     
     # Install PyQt6 with necessary dependencies
     system libexec/"bin/python", "-m", "pip", "install", 
