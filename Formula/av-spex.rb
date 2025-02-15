@@ -11,13 +11,6 @@ class AvSpex < Formula
   depends_on "numpy" => :build # needed for lxml
   depends_on "cmake" => :build # needed for pandas
   depends_on "ninja" => :build # needed for pandas
-  depends_on "maturin" => :build # needed for plotly
-  depends_on "rust" => :build # needed fot plotly
-
-  resource "jupyterlab-pygments" do
-    url "https://files.pythonhosted.org/packages/90/51/9187be60d989df97f5f0aba133fa54e7300f17616e065d1ada7d7646b6d6/jupyterlab_pygments-0.3.0.tar.gz"
-    sha256 "721aca4d9029252b11cfa9d185e5b5af4d54772bb8072f9b7036f4170054d35d"
-  end
   
   resource "setuptools" do
     url "https://files.pythonhosted.org/packages/92/ec/089608b791d210aec4e7f97488e67ab0d33add3efccb83a056cbafe3a2a6/setuptools-75.8.0.tar.gz"
@@ -73,7 +66,10 @@ class AvSpex < Formula
     venv = virtualenv_create(libexec, "python3.10")
 
     # Install all Python dependencies including PyQt6-sip but excluding PyQt6
-    venv.pip_install resources.reject { |r| r.name == "PyQt6" }
+    venv.pip_install resources.reject { |r| r.name == "PyQt6" && r.name != "plotly" }
+
+    # Install plotly without deps
+    venv.pip_install "--no-deps plotly"
     
     # Install PyQt6 with necessary dependencies
     system libexec/"bin/python", "-m", "pip", "install", 
