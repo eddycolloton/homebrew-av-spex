@@ -12,7 +12,7 @@ class AvSpex < Formula
   depends_on "cmake" => :build # needed for pandas
   depends_on "ninja" => :build # needed for pandas
   
-  resource "setuptools" do
+  resource "setuptools" do # needed for pyqt6 
     url "https://files.pythonhosted.org/packages/92/ec/089608b791d210aec4e7f97488e67ab0d33add3efccb83a056cbafe3a2a6/setuptools-75.8.0.tar.gz"
     sha256 "c5afc8f407c626b8313a86e10311dd3f661c6cd9c09d4bf8c15c0e11f9f2b0e6"
   end
@@ -60,6 +60,21 @@ class AvSpex < Formula
   resource "PyQt6-sip" do
     url "https://files.pythonhosted.org/packages/90/18/0405c54acba0c8e276dd6f0601890e6e735198218d031a6646104870fe22/pyqt6_sip-13.10.0.tar.gz"
     sha256 "d6daa95a0bd315d9ec523b549e0ce97455f61ded65d5eafecd83ed2aa4ae5350"
+  end
+
+  resource "numpy" do # needed for pandas at runtime
+    url "https://files.pythonhosted.org/packages/fb/b5/e5e75216676c0ee787011c21a905aaa6eef56358ed1de18236c7321fd422/numpy-1.26.4.tar.gz"
+    sha256 "2a02aba9ed12e4ac4eb3ea9421c420301a0c6460d9830d74a9df87efa4912010"
+  end
+  
+  resource "python-dateutil" do # needed for pandas 
+    url "https://files.pythonhosted.org/packages/4c/c4/13b4776ea2d76c115c1d1b84579f3764ee6d57204f6be27119f13a61d0a9/python-dateutil-2.8.2.tar.gz"
+    sha256 "0123cacc1627ae19ddf3c27a5de5bd67ee4586fbdd6440d9748f8abb483d3e86"
+  end
+  
+  resource "pytz" do # needed for pandas 
+    url "https://files.pythonhosted.org/packages/69/4f/7bf883f12ad496ecc9514cd9e267b29a68b3e9629661a2bbc24f80eff168/pytz-2024.1.tar.gz"
+    sha256 "2a29735dd41969f616f2d7a2cd3a6bb855968185352339753c5533185b8d1e4d"
   end
 
   def install
