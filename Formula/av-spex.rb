@@ -13,7 +13,6 @@ class AvSpex < Formula
   depends_on "ninja" => :build # needed for pandas
   ## Adding dependencies for pandas runtime here:
   depends_on "numpy"
-  depends_on "pytz"
   depends_on "dateutil"
   
   resource "setuptools" do # needed for pyqt6 
@@ -64,6 +63,11 @@ class AvSpex < Formula
   resource "PyQt6-sip" do
     url "https://files.pythonhosted.org/packages/90/18/0405c54acba0c8e276dd6f0601890e6e735198218d031a6646104870fe22/pyqt6_sip-13.10.0.tar.gz"
     sha256 "d6daa95a0bd315d9ec523b549e0ce97455f61ded65d5eafecd83ed2aa4ae5350"
+  end
+  
+  resource "pytz" do # needed for pandas 
+    url "https://files.pythonhosted.org/packages/5f/57/df1c9157c8d5a05117e455d66fd7cf6dbc46974f832b1058ed4856785d8a/pytz-2025.1.tar.gz"
+    sha256 "c2db42be2a2518b28e65f9207c4d05e6ff547d1efa4086469ef855e4ab70178e"
   end
 
   def install
