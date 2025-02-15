@@ -8,9 +8,13 @@ class AvSpex < Formula
   license "GPL-3.0-only"
 
   depends_on "python@3.10" => :build
-  depends_on "numpy" => :build # needed for lxml
+  #depends_on "numpy" => :build # needed for lxml
   depends_on "cmake" => :build # needed for pandas
   depends_on "ninja" => :build # needed for pandas
+  ## Adding dependencies for pandas runtime here:
+  depends_on "numpy"
+  depends_on "pytz"
+  depends_on "dateutil"
   
   resource "setuptools" do # needed for pyqt6 
     url "https://files.pythonhosted.org/packages/92/ec/089608b791d210aec4e7f97488e67ab0d33add3efccb83a056cbafe3a2a6/setuptools-75.8.0.tar.gz"
@@ -60,26 +64,6 @@ class AvSpex < Formula
   resource "PyQt6-sip" do
     url "https://files.pythonhosted.org/packages/90/18/0405c54acba0c8e276dd6f0601890e6e735198218d031a6646104870fe22/pyqt6_sip-13.10.0.tar.gz"
     sha256 "d6daa95a0bd315d9ec523b549e0ce97455f61ded65d5eafecd83ed2aa4ae5350"
-  end
-
-  resource "numpy" do # needed for pandas at runtime
-    url "https://files.pythonhosted.org/packages/fb/90/8956572f5c4ae52201fdec7ba2044b2c882832dcec7d5d0922c9e9acf2de/numpy-2.2.3.tar.gz"
-    sha256 "dbdc15f0c81611925f382dfa97b3bd0bc2c1ce19d4fe50482cb0ddc12ba30020"
-  end
-  
-  resource "python-dateutil" do # needed for pandas 
-    url "https://files.pythonhosted.org/packages/66/c0/0c8b6ad9f17a802ee498c46e004a0eb49bc148f2fd230864601a86dcf6db/python-dateutil-2.9.0.post0.tar.gz"
-    sha256 "37dd54208da7e1cd875388217d5e00ebd4179249f90fb72437e91a35459a0ad3"
-  end
-  
-  resource "pytz" do # needed for pandas 
-    url "https://files.pythonhosted.org/packages/5f/57/df1c9157c8d5a05117e455d66fd7cf6dbc46974f832b1058ed4856785d8a/pytz-2025.1.tar.gz"
-    sha256 "c2db42be2a2518b28e65f9207c4d05e6ff547d1efa4086469ef855e4ab70178e"
-  end
-
-  resource "six" do # needed for pandas 
-    url "https://files.pythonhosted.org/packages/94/e7/b2c673351809dca68a0e064b6af791aa332cf192da575fd474ed7d6f16a2/six-1.17.0.tar.gz"
-    sha256 "ff70335d468e7eb6ec65b95b99d3a2836546063f63acc5171de367e834932a81"
   end
 
   def install
