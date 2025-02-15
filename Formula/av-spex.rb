@@ -68,8 +68,8 @@ class AvSpex < Formula
     # Install all Python dependencies including PyQt6-sip but excluding PyQt6
     venv.pip_install resources.reject { |r| r.name == "PyQt6" && r.name != "plotly" }
 
-    # Install plotly without deps and prevent source builds
-    venv.pip_install "--no-deps --only-binary :all: plotly"
+    # Install plotly using direct pip command instead of venv.pip_install
+    system libexec/"bin/python", "-m", "pip", "install", "--no-deps", "--only-binary", ":all:", "plotly==5.23.0"
     
     # Install PyQt6 with necessary dependencies
     system libexec/"bin/python", "-m", "pip", "install", 
