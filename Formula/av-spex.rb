@@ -13,7 +13,7 @@ class AvSpex < Formula
   depends_on "ninja" => :build # needed for pandas
   depends_on "maturin" => :build # needed for plotly
   depends_on "rust" => :build # needed fot plotly
-  depends_ob "jupyterlab-pygments" => # needed for plotly
+  depends_on "jupyterlab" => :build # needed for plotly
 
   resource "setuptools" do
     url "https://files.pythonhosted.org/packages/92/ec/089608b791d210aec4e7f97488e67ab0d33add3efccb83a056cbafe3a2a6/setuptools-75.8.0.tar.gz"
