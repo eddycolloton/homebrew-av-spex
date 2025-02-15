@@ -16,7 +16,7 @@ class AvSpex < Formula
 
   resource "jupyterlab-pygments" do
     url "https://files.pythonhosted.org/packages/90/51/9187be60d989df97f5f0aba133fa54e7300f17616e065d1ada7d7646b6d6/jupyterlab_pygments-0.3.0.tar.gz"
-    sha256 "721ebe68d1f79c56b15953d31dca0f5c0281b7668b6745eb466dc47a47655578"
+    sha256 "721aca4d9029252b11cfa9d185e5b5af4d54772bb8072f9b7036f4170054d35d"
   end
   
   resource "setuptools" do
