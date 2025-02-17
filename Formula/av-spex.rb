@@ -81,10 +81,6 @@ class AvSpex < Formula
     (bin/"av-spex-gui").write_env_script(libexec/"bin/av-spex-gui",
       :PYTHONPATH => "#{libexec}/lib/python3.10/site-packages"
     )
-
-    # Make the binaries executable
-    chmod 0755, bin/"av-spex"
-    chmod 0755, bin/"av-spex-gui"
   end
 
   test do
