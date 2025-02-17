@@ -4,14 +4,12 @@ class AvSpex < Formula
 
   desc "Python project for NMAAHC media conservation lab"
   homepage "https://github.com/JPC-AV/JPC_AV_videoQC"
-  url "https://github.com/JPC-AV/JPC_AV_videoQC/archive/refs/tags/v0.6.4.tar.gz"
-  sha256 "8fe64534eb2fb80282672404920cad4a1707f9f5ea53bab7988f656acbb2fba7"
+  url "https://github.com/JPC-AV/JPC_AV_videoQC/archive/refs/tags/v0.6.5.tar.gz"
+  sha256 "ce840a533cea76aea5f44d02646bdc4ca7bdb910c60002a0b3625be0b8e2b508"
   license "GPL-3.0-only"
 
   depends_on "python@3.10" => :build
   depends_on "numpy" => :build # needed for lxml
-  depends_on "cmake" => :build # needed for pandas
-  depends_on "ninja" => :build # needed for pandas
   
   resource "setuptools" do # needed for pyqt6 
     url "https://files.pythonhosted.org/packages/92/ec/089608b791d210aec4e7f97488e67ab0d33add3efccb83a056cbafe3a2a6/setuptools-75.8.0.tar.gz"
@@ -43,11 +41,6 @@ class AvSpex < Formula
     sha256 "106b7b5d2977b339f1e97efe2778e2ab20e99994cbb0ec5e55771ed0795920c8"
   end
 
-  resource "pandas" do
-    url "https://files.pythonhosted.org/packages/88/d9/ecf715f34c73ccb1d8ceb82fc01cd1028a65a5f6dbc57bfa6ea155119058/pandas-2.2.2.tar.gz"
-    sha256 "9e79019aba43cb4fda9e4d983f8e88ca0373adbb697ae9c6c43093218de28b54"
-  end
-
   resource "plotly" do
     url "https://files.pythonhosted.org/packages/db/9e/31b2f0b8f2357cd5f3e992c76c3e4e85a5cbbad8b8c5f23d0684e3f4c608/plotly-5.23.0.tar.gz"
     sha256 "89e57d003a116303a34de6700862391367dd564222ab71f8531df70279fc0193"
@@ -63,25 +56,6 @@ class AvSpex < Formula
     sha256 "d6daa95a0bd315d9ec523b549e0ce97455f61ded65d5eafecd83ed2aa4ae5350"
   end
 
-  resource "numpy" do # needed for pandas at runtime
-    url "https://files.pythonhosted.org/packages/fb/90/8956572f5c4ae52201fdec7ba2044b2c882832dcec7d5d0922c9e9acf2de/numpy-2.2.3.tar.gz"
-    sha256 "dbdc15f0c81611925f382dfa97b3bd0bc2c1ce19d4fe50482cb0ddc12ba30020"
-  end
-  
-  resource "python-dateutil" do # needed for pandas at runtime
-    url "https://files.pythonhosted.org/packages/66/c0/0c8b6ad9f17a802ee498c46e004a0eb49bc148f2fd230864601a86dcf6db/python-dateutil-2.9.0.post0.tar.gz"
-    sha256 "37dd54208da7e1cd875388217d5e00ebd4179249f90fb72437e91a35459a0ad3"
-  end
-  
-  resource "pytz" do # needed for pandas at runtime
-    url "https://files.pythonhosted.org/packages/5f/57/df1c9157c8d5a05117e455d66fd7cf6dbc46974f832b1058ed4856785d8a/pytz-2025.1.tar.gz"
-    sha256 "c2db42be2a2518b28e65f9207c4d05e6ff547d1efa4086469ef855e4ab70178e"
-  end
-
-  resource "six" do # needed for pandas at runtime
-    url "https://files.pythonhosted.org/packages/94/e7/b2c673351809dca68a0e064b6af791aa332cf192da575fd474ed7d6f16a2/six-1.17.0.tar.gz"
-    sha256 "ff70335d468e7eb6ec65b95b99d3a2836546063f63acc5171de367e834932a81"
-  end
 
   def install
     venv = virtualenv_create(libexec, "python3.10")
