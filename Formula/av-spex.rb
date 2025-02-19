@@ -11,7 +11,7 @@ class AvSpex < Formula
   bottle do
     rebuild 3
     root_url "https://github.com/JPC-AV/JPC_AV_videoQC/releases/download/v0.7.0"
-    sha256 cellar: :any, 
+    sha256 cellar: :any_skip_relocation, 
       arm64_sonoma: "0d5ff945c8b3a5169a61412063724081623265fee62c11564e5e336c9a0bb510"
   end
 
@@ -65,7 +65,8 @@ class AvSpex < Formula
 
 
   def install
-    venv = virtualenv_create(libexec, "python3.10")
+    python_path = Formula["python@3.10"].opt_bin/"python3.10"
+    venv = virtualenv_create(libexec, python_path)
 
     # Install plotly using direct pip command instead of venv.pip_install
     system libexec/"bin/python", "-m", "pip", "install", "--no-deps", "--only-binary", ":all:", "plotly==5.23.0"
