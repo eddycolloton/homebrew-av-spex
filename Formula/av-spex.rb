@@ -8,13 +8,6 @@ class AvSpex < Formula
   sha256 "5436a72a982fc1a4d90c0b7ddda7adf51438eed1f3817a00ebdb26e937d8e69f"
   license "GPL-3.0-only"
 
-  bottle do
-    rebuild 5
-    root_url "https://github.com/JPC-AV/JPC_AV_videoQC/releases/download/v0.7.0"
-    sha256 cellar: :any_skip_relocation, 
-      arm64_sonoma: "7cc6b4e68382c5e948c0117b005b35f7c2ba0d5b114b39e5d7743b1f83cf1063"
-  end
-
   depends_on "python@3.10" => :build
   depends_on "numpy" => :build # needed for lxml
   
@@ -65,10 +58,7 @@ class AvSpex < Formula
 
 
   def install
-    # Explicitly use the full path to Python
-    python_exec = Formula["python@3.10"].opt_bin/"python3.10"
-    # Create virtualenv with explicit Python path
-    venv = virtualenv_create(libexec, python_exec.to_s)
+    venv = virtualenv_create(libexec, "python3.10")
 
     # Install plotly using direct pip command instead of venv.pip_install
     system libexec/"bin/python", "-m", "pip", "install", "--no-deps", "--only-binary", ":all:", "plotly==5.23.0"
@@ -83,23 +73,14 @@ class AvSpex < Formula
 
     venv.pip_install buildpath
     
-    # Instead of relying on the python symlink in the virtualenv, create wrapper scripts
-    # that call the main scripts directly with the correct Python interpreter
-    (bin/"av-spex").write <<~EOS
-      #!/bin/bash
-      export PYTHONPATH="#{libexec}/lib/python3.10/site-packages"
-      exec "#{python_exec}" "#{libexec}/bin/av-spex" "$@"
-    EOS
-
-    (bin/"av-spex-gui").write <<~EOS
-      #!/bin/bash
-      export PYTHONPATH="#{libexec}/lib/python3.10/site-packages"
-      exec "#{python_exec}" "#{libexec}/bin/av-spex-gui" "$@"
-    EOS
-
-    # Make the wrapper scripts executable
-    chmod 0755, bin/"av-spex"
-    chmod 0755, bin/"av-spex-gui"
+    # Create executables with correct environment
+    (bin/"av-spex").write_env_script(libexec/"bin/av-spex", 
+      :PYTHONPATH => "#{libexec}/lib/python3.10/site-packages"
+    )
+    
+    (bin/"av-spex-gui").write_env_script(libexec/"bin/av-spex-gui",
+      :PYTHONPATH => "#{libexec}/lib/python3.10/site-packages"
+    )
   end
 
   test do
