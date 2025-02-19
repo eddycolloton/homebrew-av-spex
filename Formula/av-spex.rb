@@ -81,11 +81,11 @@ class AvSpex < Formula
     venv.pip_install buildpath
     
     # Create executables with correct environment
-    (bin/"av-spex").write_env_script(libexec/"bin/av-spex", 
+    (bin/"av-spex").write_env_script("#{libexec}/bin/av-spex", 
       :PYTHONPATH => "#{libexec}/lib/python3.10/site-packages"
     )
     
-    (bin/"av-spex-gui").write_env_script(libexec/"bin/av-spex-gui",
+    (bin/"av-spex-gui").write_env_script("#{libexec}/bin/av-spex-gui",
       :PYTHONPATH => "#{libexec}/lib/python3.10/site-packages"
     )
   end
