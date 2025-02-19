@@ -65,8 +65,10 @@ class AvSpex < Formula
 
 
   def install
-    python_path = Formula["python@3.10"].opt_bin/"python3.10"
-    venv = virtualenv_create(libexec, python_path)
+    # Explicitly use the full path to Python
+    python_exec = Formula["python@3.10"].opt_bin/"python3.10"
+    # Create virtualenv with explicit Python path
+    venv = virtualenv_create(libexec, python_exec.to_s)
 
     # Install plotly using direct pip command instead of venv.pip_install
     system libexec/"bin/python", "-m", "pip", "install", "--no-deps", "--only-binary", ":all:", "plotly==5.23.0"
@@ -81,16 +83,23 @@ class AvSpex < Formula
 
     venv.pip_install buildpath
     
-    # Create executables withing relocatable venv
-    (bin/"av-spex").write_env_script(libexec/"bin/av-spex", 
-    :PYTHONPATH => "#{libexec}/lib/python3.10/site-packages",
-    :PATH => "#{Formula["python@3.10"].opt_bin}:$PATH"
-    )
-      
-    (bin/"av-spex-gui").write_env_script(libexec/"bin/av-spex-gui",
-    :PYTHONPATH => "#{libexec}/lib/python3.10/site-packages",
-    :PATH => "#{Formula["python@3.10"].opt_bin}:$PATH"
-    )
+    # Instead of relying on the python symlink in the virtualenv, create wrapper scripts
+    # that call the main scripts directly with the correct Python interpreter
+    (bin/"av-spex").write <<~EOS
+      #!/bin/bash
+      export PYTHONPATH="#{libexec}/lib/python3.10/site-packages"
+      exec "#{python_exec}" "#{libexec}/bin/av-spex" "$@"
+    EOS
+
+    (bin/"av-spex-gui").write <<~EOS
+      #!/bin/bash
+      export PYTHONPATH="#{libexec}/lib/python3.10/site-packages"
+      exec "#{python_exec}" "#{libexec}/bin/av-spex-gui" "$@"
+    EOS
+
+    # Make the wrapper scripts executable
+    chmod 0755, bin/"av-spex"
+    chmod 0755, bin/"av-spex-gui"
   end
 
   test do
