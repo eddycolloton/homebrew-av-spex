@@ -8,7 +8,7 @@ class AvSpex < Formula
   sha256 "5436a72a982fc1a4d90c0b7ddda7adf51438eed1f3817a00ebdb26e937d8e69f"
   license "GPL-3.0-only"
 
-  depends_on "python@3.10" => :build
+  depends_on "python@3.10" # needed at runtime
   depends_on "numpy" => :build # needed for lxml
   
   resource "setuptools" do # needed for pyqt6 
