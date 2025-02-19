@@ -10,6 +10,7 @@ class AvSpex < Formula
 
   bottle do
     rebuild 1
+    root_url "https://github.com/JPC-AV/JPC_AV_videoQC/releases/download/v0.7.0/"
     sha256 cellar: :any, 
       arm64_sonoma: "acb8b3c29c428e1c05cf64df89c5223ddeecb42e33b34fb50dcb540332a80679"
   end
