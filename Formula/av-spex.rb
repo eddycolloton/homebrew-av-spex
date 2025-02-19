@@ -8,6 +8,12 @@ class AvSpex < Formula
   sha256 "5436a72a982fc1a4d90c0b7ddda7adf51438eed1f3817a00ebdb26e937d8e69f"
   license "GPL-3.0-only"
 
+  bottle do
+    rebuild 1
+    sha256 cellar: :any, 
+      arm64_sonoma: "acb8b3c29c428e1c05cf64df89c5223ddeecb42e33b34fb50dcb540332a80679"
+  end
+
   depends_on "python@3.10" => :build
   depends_on "numpy" => :build # needed for lxml
   
