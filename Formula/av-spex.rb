@@ -9,7 +9,6 @@ class AvSpex < Formula
   license "GPL-3.0-only"
 
   depends_on "python@3.10"
-  depends_on "numpy" => :build # needed for lxml
   depends_on "pyqt"
   depends_on "qt@6"
   
