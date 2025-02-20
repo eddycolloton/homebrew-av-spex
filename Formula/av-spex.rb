@@ -10,6 +10,8 @@ class AvSpex < Formula
 
   depends_on "python@3.10"
   depends_on "numpy" => :build # needed for lxml
+  depends_on "pyqt6"
+  depends_on "qt@6"
   
   resource "setuptools" do # needed for pyqt6 
     url "https://files.pythonhosted.org/packages/92/ec/089608b791d210aec4e7f97488e67ab0d33add3efccb83a056cbafe3a2a6/setuptools-75.8.0.tar.gz"
@@ -46,37 +48,15 @@ class AvSpex < Formula
     sha256 "89e57d003a116303a34de6700862391367dd564222ab71f8531df70279fc0193"
   end
 
-  resource "PyQt6" do
-    url "https://files.pythonhosted.org/packages/d1/f9/b0c2ba758b14a7219e076138ea1e738c068bf388e64eee68f3df4fc96f5a/PyQt6-6.7.1.tar.gz"
-    sha256 "3672a82ccd3a62e99ab200a13903421e2928e399fda25ced98d140313ad59cb9"
-  end
-
-  resource "PyQt6-sip" do
-    url "https://files.pythonhosted.org/packages/90/18/0405c54acba0c8e276dd6f0601890e6e735198218d031a6646104870fe22/pyqt6_sip-13.10.0.tar.gz"
-    sha256 "d6daa95a0bd315d9ec523b549e0ce97455f61ded65d5eafecd83ed2aa4ae5350"
-  end
-
-  resource "PyQt6-Qt6" do
-    url "https://files.pythonhosted.org/packages/d6/b3/6d4f8257b46554fb2c89b33a6773a3f05ed961b3cd83828caee5dc79899f/PyQt6_Qt6-6.8.2-py3-none-macosx_11_0_arm64.whl"
-    sha256 "40cda901a3e1617e79225c354fe9d89b80249f0a6c6aaa18b40938e05bbf7d1f"
-  end
-
 
   def install
     venv = virtualenv_create(libexec, "python3")
     
     # Install all Python dependencies including PyQt6-sip but excluding PyQt6
-    venv.pip_install resources.reject { |r| r.name == "PyQt6" || r.name == "PyQt6-sip" || r.name == "PyQt6-Qt6" || r.name == "plotly" }
+    venv.pip_install resources.reject { |r| r.name == "plotly" }
 
     # Install plotly using direct pip command instead of venv.pip_install
     system libexec/"bin/python", "-m", "pip", "install", "--no-deps", "--only-binary", ":all:", "plotly==5.23.0"
-    
-    # Install PyQt6-sip first
-    venv.pip_install resource("PyQt6-sip")
-  
-    # Install PyQt6 with Qt6 binaries together
-    system libexec/"bin/python", "-m", "pip", "install", "--no-deps", "--only-binary", ":all:",
-         "PyQt6==6.7.1", "PyQt6-Qt6==6.7.1"
 
     # Install the package itself
     venv.pip_install_and_link buildpath
