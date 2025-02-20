@@ -51,11 +51,6 @@ class AvSpex < Formula
     sha256 "3672a82ccd3a62e99ab200a13903421e2928e399fda25ced98d140313ad59cb9"
   end
 
-  resource "PyQt6-sip" do
-    url "https://files.pythonhosted.org/packages/90/18/0405c54acba0c8e276dd6f0601890e6e735198218d031a6646104870fe22/pyqt6_sip-13.10.0.tar.gz"
-    sha256 "d6daa95a0bd315d9ec523b549e0ce97455f61ded65d5eafecd83ed2aa4ae5350"
-  end
-
 
   def install
     venv = virtualenv_create(libexec, "python3")
@@ -66,8 +61,8 @@ class AvSpex < Formula
     # Install all Python dependencies including PyQt6-sip but excluding PyQt6
     venv.pip_install resources.reject { |r| r.name == "PyQt6" || r.name == "plotly" }
 
-    # Install PyQt6 core dependencies individually
-    system libexec/"bin/python", "-m", "pip", "install", "--no-deps", "PyQt6-QtCore==6.7.1", "PyQt6-QtGui==6.7.1", "PyQt6-QtWidgets==6.7.1"
+    # Install PyQt6 core dependencies without SQL modules
+    system libexec/"bin/python", "-m", "pip", "install", "--no-deps", "--only-binary", ":all:", "PyQt6-Qt6==6.7.1"
     
     # Install PyQt6 with necessary dependencies
     system libexec/"bin/python", "-m", "pip", "install", "--no-deps", "--only-binary", ":all:",
