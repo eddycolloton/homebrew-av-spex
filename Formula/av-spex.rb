@@ -10,7 +10,7 @@ class AvSpex < Formula
 
   depends_on "python@3.10"
   depends_on "numpy" => :build # needed for lxml
-  depends_on "pyqt6"
+  depends_on "pyqt"
   depends_on "qt@6"
   
   resource "setuptools" do # needed for pyqt6 
