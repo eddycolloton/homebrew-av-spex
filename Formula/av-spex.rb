@@ -15,7 +15,7 @@ class AvSpex < Formula
     arm64_sonoma: "569067c4d0047c13b9b87de699ecd3d411d7c191ff9374b890f23eae914967ea"
   end
 
-  depends_on "python@3.10" => :build 
+  depends_on "python@3.10"
   depends_on "numpy" => :build # needed for lxml
   
   resource "setuptools" do # needed for pyqt6 
@@ -66,7 +66,11 @@ class AvSpex < Formula
 
   def install
     # Create virtualenv with Python 3.10
-    venv = virtualenv_create(libexec, "python3.10")
+    # Explicitly specify which Python to use
+    ENV["PYTHON"] = Formula["python@3.10"].opt_bin/"python3.10"
+    
+    # Create virtualenv with specified Python
+    venv = virtualenv_create(libexec, Formula["python@3.10"].opt_bin/"python3.10")
 
     # Install all Python dependencies including PyQt6-sip but excluding PyQt6
     venv.pip_install resources.reject { |r| r.name == "PyQt6" || r.name == "plotly" }
@@ -82,22 +86,26 @@ class AvSpex < Formula
     # Install the application
     venv.pip_install buildpath
     
-    # Create executables with more robust env scripts
+    # Create executables with absolute path to Python
     (bin/"av-spex").write <<~EOS
       #!/bin/bash
       export PYTHONPATH="#{libexec}/lib/python3.10/site-packages"
-      exec "#{libexec}/bin/av-spex" "$@"
+      exec "#{Formula["python@3.10"].opt_bin}/python3.10" "#{libexec}/bin/av-spex" "$@"
     EOS
     
     (bin/"av-spex-gui").write <<~EOS
       #!/bin/bash
       export PYTHONPATH="#{libexec}/lib/python3.10/site-packages"
-      exec "#{libexec}/bin/av-spex-gui" "$@"
+      exec "#{Formula["python@3.10"].opt_bin}/python3.10" "#{libexec}/bin/av-spex-gui" "$@"
     EOS
     
-    # Make the scripts executable
     chmod 0755, bin/"av-spex"
     chmod 0755, bin/"av-spex-gui"
+  end
+
+  def post_install
+    # Fix any broken symlinks after installation
+    system "brew", "link", "--overwrite", "av-spex"
   end
 
   test do
