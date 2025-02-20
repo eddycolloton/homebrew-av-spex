@@ -8,7 +8,7 @@ class AvSpex < Formula
   sha256 "5436a72a982fc1a4d90c0b7ddda7adf51438eed1f3817a00ebdb26e937d8e69f"
   license "GPL-3.0-only"
 
-  depends_on "python@3.10" # needed at runtime
+  depends_on "python@3.10" => :build 
   depends_on "numpy" => :build # needed for lxml
   
   resource "setuptools" do # needed for pyqt6 
@@ -72,12 +72,25 @@ class AvSpex < Formula
            "PyQt6", "--config-settings", "--confirm-license=",
            "--verbose"
 
-    # Install the package itself
-    venv.pip_install_and_link buildpath
-  
-    # Create executables
-    bin.install_symlink libexec/"bin/av-spex"
-    bin.install_symlink libexec/"bin/av-spex-gui"
+    # Install the application
+    venv.pip_install buildpath
+    
+    # Create executables with more robust env scripts
+    (bin/"av-spex").write <<~EOS
+      #!/bin/bash
+      export PYTHONPATH="#{libexec}/lib/python3.10/site-packages"
+      exec "#{libexec}/bin/av-spex" "$@"
+    EOS
+    
+    (bin/"av-spex-gui").write <<~EOS
+      #!/bin/bash
+      export PYTHONPATH="#{libexec}/lib/python3.10/site-packages"
+      exec "#{libexec}/bin/av-spex-gui" "$@"
+    EOS
+    
+    # Make the scripts executable
+    chmod 0755, bin/"av-spex"
+    chmod 0755, bin/"av-spex-gui"
   end
 
   test do
