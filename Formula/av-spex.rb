@@ -63,6 +63,10 @@ class AvSpex < Formula
 
     # Install PyQt6 core dependencies without SQL modules
     system libexec/"bin/python", "-m", "pip", "install", "--no-deps", "--only-binary", ":all:", "PyQt6-Qt6==6.7.1"
+
+    # Remove SQL drivers completely
+    sql_drivers_path = libexec/"lib/python3.10/site-packages/PyQt6/Qt6/plugins/sqldrivers"
+    rm_rf sql_drivers_path
     
     # Install PyQt6 with necessary dependencies
     system libexec/"bin/python", "-m", "pip", "install", "--no-deps", "--only-binary", ":all:",
