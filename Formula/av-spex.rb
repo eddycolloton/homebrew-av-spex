@@ -68,7 +68,7 @@ class AvSpex < Formula
     
     # Install PyQt6 with necessary dependencies
     system libexec/"bin/python", "-m", "pip", "install", 
-           "PyQt6", "--config-settings", "--confirm-license=",
+           "PyQt6", "--confirm-license=",
            "--verbose"
 
     # Install the package itself
