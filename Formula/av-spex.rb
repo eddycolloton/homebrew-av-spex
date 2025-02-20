@@ -4,10 +4,11 @@ class AvSpex < Formula
 
   desc "Python project for NMAAHC media conservation lab"
   homepage "https://github.com/JPC-AV/JPC_AV_videoQC"
-  url "https://github.com/JPC-AV/JPC_AV_videoQC/archive/refs/tags/v0.7.0.tar.gz"
-  sha256 "5436a72a982fc1a4d90c0b7ddda7adf51438eed1f3817a00ebdb26e937d8e69f"
+  url "https://github.com/JPC-AV/JPC_AV_videoQC/archive/refs/tags/v0.6.5.tar.gz"
+  sha256 "ce840a533cea76aea5f44d02646bdc4ca7bdb910c60002a0b3625be0b8e2b508"
   license "GPL-3.0-only"
 
+  depends_on "python@3.10" => :build
   depends_on "numpy" => :build # needed for lxml
   
   resource "setuptools" do # needed for pyqt6 
@@ -57,63 +58,25 @@ class AvSpex < Formula
 
 
   def install
-    # First ensure Python 3.10 is installed as keg-only
-    system "brew", "install", "python@3.10"
-    
-    # Get the path to Python 3.10
-    python_path = Utils.safe_popen_read("brew", "--prefix", "python@3.10").chomp
-    python_bin = "#{python_path}/bin/python3.10"
-    
-    # Create a self-contained virtualenv
-    system "python3", "-m", "venv", libexec
-    
-    # Use the virtualenv pip to install dependencies
-    system "#{libexec}/bin/pip", "install", "--upgrade", "pip", "setuptools", "wheel"
-    
-    # Install plotly directly
-    system "#{libexec}/bin/pip", "install", "--no-deps", "plotly==5.23.0"
-    
-    # Install Python resources
-    resources.each do |r|
-      next if r.name == "PyQt6" || r.name == "plotly"
-      r.stage do
-        system "#{libexec}/bin/pip", "install", "--no-deps", "."
-      end
-    end
-    
-    # Install PyQt6 with special flags
-    system "#{libexec}/bin/pip", "install", "PyQt6", "--config-settings", "--confirm-license=", "--verbose"
-    
-    # Install the main package
-    system "#{libexec}/bin/pip", "install", "--no-deps", "."
-    
-    # Create wrapper scripts that don't rely on shebang
-    (bin/"av-spex").write <<~EOS
-      #!/bin/sh
-      # Find Python 3.10 at runtime
-      PYTHON=$(command -v python3.10 || command -v python3)
-      export PYTHONPATH="#{libexec}/lib/python3.10/site-packages:$PYTHONPATH"
-      exec "$PYTHON" "#{libexec}/bin/av-spex" "$@"
-    EOS
-    
-    (bin/"av-spex-gui").write <<~EOS
-      #!/bin/sh
-      # Find Python 3.10 at runtime
-      PYTHON=$(command -v python3.10 || command -v python3)
-      export PYTHONPATH="#{libexec}/lib/python3.10/site-packages:$PYTHONPATH"
-      exec "$PYTHON" "#{libexec}/bin/av-spex-gui" "$@"
-    EOS
-    
-    chmod 0755, bin/"av-spex"
-    chmod 0755, bin/"av-spex-gui"
-  end
+    venv = virtualenv_create(libexec, "python3.10")
 
-  def caveats
-    <<~EOS
-      This formula requires Python 3.10 to be installed.
-      If you experience issues, please ensure Python 3.10 is installed:
-        brew install python@3.10
-    EOS
+    # Install plotly using direct pip command instead of venv.pip_install
+    system libexec/"bin/python", "-m", "pip", "install", "--no-deps", "--only-binary", ":all:", "plotly==5.23.0"
+    
+    # Install all Python dependencies including PyQt6-sip but excluding PyQt6
+    venv.pip_install resources.reject { |r| r.name == "PyQt6" || r.name == "plotly" }
+    
+    # Install PyQt6 with necessary dependencies
+    system libexec/"bin/python", "-m", "pip", "install", 
+           "PyQt6", "--config-settings", "--confirm-license=",
+           "--verbose"
+
+    # Install the package itself
+    venv.pip_install_and_link buildpath
+    
+    # Create executables
+    bin.install_symlink libexec/"bin/av-spex"
+    bin.install_symlink libexec/"bin/av-spex-gui"
   end
 
   test do
