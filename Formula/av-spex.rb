@@ -66,14 +66,24 @@ class AvSpex < Formula
     
     # Install all Python dependencies including PyQt6-sip but excluding PyQt6
     venv.pip_install resources.reject { |r| r.name == "PyQt6" || r.name == "plotly" }
+
+    # attempting to link qt with pyqt6
+    qt6_prefix = Formula["qt"].opt_prefix
+    ENV["DYLD_FRAMEWORK_PATH"] = "#{qt6_prefix}/Frameworks"
     
-    # Install PyQt6 with necessary dependencies
+    # Install PyQt6 without dependencies
     system libexec/"bin/python", "-m", "pip", "install", "--no-deps", "--only-binary", ":all:",
            "--config-settings", "--confirm-license=", "--verbose", "PyQt6==6.7.1"
 
-    # Create symlink from Homebrew Qt to PyQt site-packages
-    mkdir_p libexec/"lib/python3.10/site-packages/PyQt6/Qt6"
-    ln_sf Formula["qt"].opt_prefix, libexec/"lib/python3.10/site-packages/PyQt6/Qt6"
+    # Create Qt plugin symlinks
+    plugin_dir = libexec/"lib/python3.10/site-packages/PyQt6/Qt6/plugins"
+    mkdir_p plugin_dir
+    ln_sf Dir["#{qt6_prefix}/plugins/*"], plugin_dir
+    
+    # Create framework symlinks
+    frameworks_dir = libexec/"lib/python3.10/site-packages/PyQt6/Qt6/lib"
+    mkdir_p frameworks_dir
+    ln_sf Dir["#{qt6_prefix}/lib/*.framework"], frameworks_dir
 
     # Install the package itself
     venv.pip_install_and_link buildpath
