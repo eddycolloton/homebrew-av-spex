@@ -73,16 +73,12 @@ class AvSpex < Formula
            "PyQt6", "--config-settings", "--confirm-license=",
            "--verbose"
 
-    venv.pip_install buildpath
-    
-    # Create executables with correct environment
-    (bin/"av-spex").write_env_script(libexec/"bin/av-spex", 
-      :PYTHONPATH => "#{libexec}/lib/python3.10/site-packages"
-    )
-    
-    (bin/"av-spex-gui").write_env_script(libexec/"bin/av-spex-gui",
-      :PYTHONPATH => "#{libexec}/lib/python3.10/site-packages"
-    )
+    # Install the package itself
+    venv.pip_install_and_link buildpath
+  
+    # Create executables
+    bin.install_symlink libexec/"bin/av-spex"
+    bin.install_symlink libexec/"bin/av-spex-gui"
   end
 
   test do
