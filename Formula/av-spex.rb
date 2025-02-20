@@ -70,6 +70,9 @@ class AvSpex < Formula
     system libexec/"bin/python", "-m", "pip", "install", "--no-deps", "--only-binary", ":all:",
            "--config-settings", "--confirm-license=", "--verbose", "PyQt6==6.7.1"
 
+    # Now try installing the plugins package separately
+    system libexec/"bin/python", "-m", "pip", "install", "--no-deps", "PyQt6-plugins"
+
     # Install the package itself
     venv.pip_install_and_link buildpath
     
