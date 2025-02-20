@@ -8,13 +8,6 @@ class AvSpex < Formula
   sha256 "5436a72a982fc1a4d90c0b7ddda7adf51438eed1f3817a00ebdb26e937d8e69f"
   license "GPL-3.0-only"
 
-  bottle do
-    rebuild 1
-    root_url "https://github.com/JPC-AV/JPC_AV_videoQC/releases/download/v0.7.0"
-    sha256 cellar: :any_skip_relocation, 
-    arm64_sonoma: "5b02a5ccc1f8b7a4727175d662e90fca5a754ee94f46401d7f0966aee6bc16d9"
-  end
-
   depends_on "python@3.10"
   depends_on "numpy" => :build # needed for lxml
   depends_on "pyqt"
@@ -60,10 +53,13 @@ class AvSpex < Formula
     venv = virtualenv_create(libexec, "python3")
     
     # Install all Python dependencies including PyQt6-sip but excluding PyQt6
-    venv.pip_install resources.reject { |r| r.name == "plotly" }
+    venv.pip_install resources.reject { |r| r.name == "plotly" || r.name == "lxml" }
 
     # Install plotly using direct pip command instead of venv.pip_install
     system libexec/"bin/python", "-m", "pip", "install", "--no-deps", "--only-binary", ":all:", "plotly==5.23.0"
+
+    # Install lxml without dependencies
+    system libexec/"bin/python", "-m", "pip", "install", "--no-deps", "--only-binary", ":all:", "lxml==5.2.0"
 
     # Install the package itself
     venv.pip_install_and_link buildpath
