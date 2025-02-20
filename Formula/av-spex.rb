@@ -9,6 +9,7 @@ class AvSpex < Formula
   license "GPL-3.0-only"
 
   depends_on "python@3.10"
+  depends_on "qt6"
   depends_on "numpy" => :build # needed for lxml
   
   resource "setuptools" do # needed for pyqt6 
@@ -65,14 +66,14 @@ class AvSpex < Formula
     
     # Install all Python dependencies including PyQt6-sip but excluding PyQt6
     venv.pip_install resources.reject { |r| r.name == "PyQt6" || r.name == "plotly" }
-
-    # Install PyQt6 core dependencies without SQL modules
-  system libexec/"bin/python", "-m", "pip", "install", "--no-deps", "--only-binary", ":all:",
-  "PyQt6-Qt6==6.7.1", "--config-settings", "bind_modules=QtCore,QtGui,QtWidgets"
     
     # Install PyQt6 with necessary dependencies
     system libexec/"bin/python", "-m", "pip", "install", "--no-deps", "--only-binary", ":all:",
            "--config-settings", "--confirm-license=", "--verbose", "PyQt6==6.7.1"
+
+    # Create symlink from Homebrew Qt to PyQt site-packages
+    mkdir_p libexec/"lib/python3.10/site-packages/PyQt6/Qt6"
+    ln_sf Formula["qt"].opt_prefix, libexec/"lib/python3.10/site-packages/PyQt6/Qt6"
 
     # Install the package itself
     venv.pip_install_and_link buildpath
