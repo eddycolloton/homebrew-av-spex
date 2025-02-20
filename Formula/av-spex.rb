@@ -65,13 +65,13 @@ class AvSpex < Formula
     
     # Install all Python dependencies including PyQt6-sip but excluding PyQt6
     venv.pip_install resources.reject { |r| r.name == "PyQt6" || r.name == "plotly" }
+
+    # Install PyQt6 dependencies explicitly
+    system libexec/"bin/python", "-m", "pip", "install", "PyQt6-Qt6==6.7.1"
     
     # Install PyQt6 with necessary dependencies
     system libexec/"bin/python", "-m", "pip", "install", "--no-deps", "--only-binary", ":all:",
            "--config-settings", "--confirm-license=", "--verbose", "PyQt6==6.7.1"
-
-    # Now try installing the plugins package separately
-    system libexec/"bin/python", "-m", "pip", "install", "--no-deps", "PyQt6-plugins"
 
     # Install the package itself
     venv.pip_install_and_link buildpath
