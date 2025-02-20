@@ -8,7 +8,6 @@ class AvSpex < Formula
   sha256 "5436a72a982fc1a4d90c0b7ddda7adf51438eed1f3817a00ebdb26e937d8e69f"
   license "GPL-3.0-only"
 
-  ./av-spex--0.7.0.arm64_sonoma.bottle.1.tar.gz
   bottle do
     rebuild 1
     root_url "https://github.com/JPC-AV/JPC_AV_videoQC/releases/download/v0.7.0"
