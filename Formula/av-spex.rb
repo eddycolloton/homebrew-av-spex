@@ -66,9 +66,8 @@ class AvSpex < Formula
     # Install all Python dependencies including PyQt6-sip but excluding PyQt6
     venv.pip_install resources.reject { |r| r.name == "PyQt6" || r.name == "plotly" }
 
-    # Install PyQt6 core dependencies without SQL modules
-    system libexec/"bin/python", "-m", "pip", "install", "--no-deps", "--only-binary", ":all:",
-       "--config-settings=bind_modules=QtCore,QtGui,QtWidgets", "PyQt6-Qt6==6.7.1"
+    # Install PyQt6 core dependencies individually
+    system libexec/"bin/python", "-m", "pip", "install", "--no-deps", "PyQt6-QtCore==6.7.1", "PyQt6-QtGui==6.7.1", "PyQt6-QtWidgets==6.7.1"
     
     # Install PyQt6 with necessary dependencies
     system libexec/"bin/python", "-m", "pip", "install", "--no-deps", "--only-binary", ":all:",
