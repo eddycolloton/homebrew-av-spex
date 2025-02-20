@@ -15,7 +15,6 @@ class AvSpex < Formula
     arm64_sonoma: "569067c4d0047c13b9b87de699ecd3d411d7c191ff9374b890f23eae914967ea"
   end
 
-  depends_on "python@3.10"
   depends_on "numpy" => :build # needed for lxml
   
   resource "setuptools" do # needed for pyqt6 
@@ -65,47 +64,63 @@ class AvSpex < Formula
 
 
   def install
-    # Create virtualenv with Python 3.10
-    # Explicitly specify which Python to use
-    ENV["PYTHON"] = Formula["python@3.10"].opt_bin/"python3.10"
+    # First ensure Python 3.10 is installed as keg-only
+    system "brew", "install", "python@3.10"
     
-    # Create virtualenv with specified Python
-    venv = virtualenv_create(libexec, Formula["python@3.10"].opt_bin/"python3.10")
-
-    # Install all Python dependencies including PyQt6-sip but excluding PyQt6
-    venv.pip_install resources.reject { |r| r.name == "PyQt6" || r.name == "plotly" }
-
-    # Install plotly using direct pip command instead of venv.pip_install
-    system libexec/"bin/python", "-m", "pip", "install", "--no-deps", "--only-binary", ":all:", "plotly==5.23.0"
+    # Get the path to Python 3.10
+    python_path = Utils.safe_popen_read("brew", "--prefix", "python@3.10").chomp
+    python_bin = "#{python_path}/bin/python3.10"
     
-    # Install PyQt6 with necessary dependencies
-    system libexec/"bin/python", "-m", "pip", "install", 
-           "PyQt6", "--config-settings", "--confirm-license=",
-           "--verbose"
-
-    # Install the application
-    venv.pip_install buildpath
+    # Create a self-contained virtualenv
+    system "python3", "-m", "venv", libexec
     
-    # Create executables with absolute path to Python
+    # Use the virtualenv pip to install dependencies
+    system "#{libexec}/bin/pip", "install", "--upgrade", "pip", "setuptools", "wheel"
+    
+    # Install plotly directly
+    system "#{libexec}/bin/pip", "install", "--no-deps", "plotly==5.23.0"
+    
+    # Install Python resources
+    resources.each do |r|
+      next if r.name == "PyQt6" || r.name == "plotly"
+      r.stage do
+        system "#{libexec}/bin/pip", "install", "--no-deps", "."
+      end
+    end
+    
+    # Install PyQt6 with special flags
+    system "#{libexec}/bin/pip", "install", "PyQt6", "--config-settings", "--confirm-license=", "--verbose"
+    
+    # Install the main package
+    system "#{libexec}/bin/pip", "install", "--no-deps", "."
+    
+    # Create wrapper scripts that don't rely on shebang
     (bin/"av-spex").write <<~EOS
-      #!/bin/bash
-      export PYTHONPATH="#{libexec}/lib/python3.10/site-packages"
-      exec "#{Formula["python@3.10"].opt_bin}/python3.10" "#{libexec}/bin/av-spex" "$@"
+      #!/bin/sh
+      # Find Python 3.10 at runtime
+      PYTHON=$(command -v python3.10 || command -v python3)
+      export PYTHONPATH="#{libexec}/lib/python3.10/site-packages:$PYTHONPATH"
+      exec "$PYTHON" "#{libexec}/bin/av-spex" "$@"
     EOS
     
     (bin/"av-spex-gui").write <<~EOS
-      #!/bin/bash
-      export PYTHONPATH="#{libexec}/lib/python3.10/site-packages"
-      exec "#{Formula["python@3.10"].opt_bin}/python3.10" "#{libexec}/bin/av-spex-gui" "$@"
+      #!/bin/sh
+      # Find Python 3.10 at runtime
+      PYTHON=$(command -v python3.10 || command -v python3)
+      export PYTHONPATH="#{libexec}/lib/python3.10/site-packages:$PYTHONPATH"
+      exec "$PYTHON" "#{libexec}/bin/av-spex-gui" "$@"
     EOS
     
     chmod 0755, bin/"av-spex"
     chmod 0755, bin/"av-spex-gui"
   end
 
-  def post_install
-    # Fix any broken symlinks after installation
-    system "brew", "link", "--overwrite", "av-spex"
+  def caveats
+    <<~EOS
+      This formula requires Python 3.10 to be installed.
+      If you experience issues, please ensure Python 3.10 is installed:
+        brew install python@3.10
+    EOS
   end
 
   test do
