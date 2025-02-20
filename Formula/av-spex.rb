@@ -8,6 +8,14 @@ class AvSpex < Formula
   sha256 "5436a72a982fc1a4d90c0b7ddda7adf51438eed1f3817a00ebdb26e937d8e69f"
   license "GPL-3.0-only"
 
+  ./av-spex--0.7.0.arm64_sonoma.bottle.1.tar.gz
+  bottle do
+    rebuild 1
+    root_url "https://github.com/JPC-AV/JPC_AV_videoQC/releases/download/v0.7.0"
+    sha256 cellar: :any_skip_relocation, 
+    arm64_sonoma: "5b02a5ccc1f8b7a4727175d662e90fca5a754ee94f46401d7f0966aee6bc16d9"
+  end
+
   depends_on "python@3.10"
   depends_on "numpy" => :build # needed for lxml
   depends_on "pyqt"
