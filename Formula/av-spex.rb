@@ -66,12 +66,6 @@ class AvSpex < Formula
     # Install all Python dependencies including PyQt6-sip but excluding PyQt6
     venv.pip_install resources.reject { |r| r.name == "PyQt6" || r.name == "plotly" }
     
-    # Install PyQt6 with necessary dependencies
-    system libexec/"bin/python", "-m", "pip", "install", "--only-binary", ":all:",
-           "--config-settings", "--confirm-license=", "--verbose", "PyQt6==6.7.1"
-
-    # Remove the problematic SQL driver plugin
-    rm_f libexec/"lib/python3.10/site-packages/PyQt6/Qt6/plugins/sqldrivers/libqsqlmimer.dylib"
 
     # Install the package itself
     venv.pip_install_and_link buildpath
