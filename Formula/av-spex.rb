@@ -58,7 +58,9 @@ class AvSpex < Formula
 
 
   def install
-    venv = virtualenv_create(libexec, Formula["python@3.10"].opt_bin/"python3.10")
+    # Create virtualenv with --always-copy to avoid symlinks for bottling
+    venv = virtualenv_create(libexec, "python3.10", system_site_packages: false, with_pip: true, 
+    virtualenv_args: ["--always-copy"])
 
     # Install plotly using direct pip command instead of venv.pip_install
     system libexec/"bin/python", "-m", "pip", "install", "--no-deps", "--only-binary", ":all:", "plotly==5.23.0"
@@ -77,7 +79,7 @@ class AvSpex < Formula
     (bin/"av-spex").write_env_script(libexec/"bin/av-spex", 
       :PYTHONPATH => "#{libexec}/lib/python3.10/site-packages"
     )
-  
+    
     (bin/"av-spex-gui").write_env_script(libexec/"bin/av-spex-gui",
       :PYTHONPATH => "#{libexec}/lib/python3.10/site-packages"
     )
