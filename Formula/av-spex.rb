@@ -8,13 +8,6 @@ class AvSpex < Formula
   sha256 "5436a72a982fc1a4d90c0b7ddda7adf51438eed1f3817a00ebdb26e937d8e69f"
   license "GPL-3.0-only"
 
-  bottle do
-    rebuild 1
-    root_url "https://github.com/JPC-AV/JPC_AV_videoQC/releases/download/v0.7.0"
-    sha256 cellar: :any, 
-    arm64_sonoma: "569067c4d0047c13b9b87de699ecd3d411d7c191ff9374b890f23eae914967ea"
-  end
-
   depends_on "numpy" => :build # needed for lxml
   
   resource "setuptools" do # needed for pyqt6 
