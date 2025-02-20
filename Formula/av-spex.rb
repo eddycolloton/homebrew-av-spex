@@ -67,7 +67,7 @@ class AvSpex < Formula
     venv.pip_install resources.reject { |r| r.name == "PyQt6" || r.name == "plotly" }
     
     # Install PyQt6 with necessary dependencies
-    system libexec/"bin/python", "-m", "pip", "install", "--no-deps", "--config-settings", "--confirm-license=",
+    system libexec/"bin/python", "-m", "pip", "install", "--config-settings", "--confirm-license=",
            "--verbose", "PyQt6==6.7.1"
 
     # Install the package itself
