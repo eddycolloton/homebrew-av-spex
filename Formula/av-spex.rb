@@ -51,6 +51,11 @@ class AvSpex < Formula
     sha256 "3672a82ccd3a62e99ab200a13903421e2928e399fda25ced98d140313ad59cb9"
   end
 
+  resource "PyQt6-sip" do
+    url "https://files.pythonhosted.org/packages/90/18/0405c54acba0c8e276dd6f0601890e6e735198218d031a6646104870fe22/pyqt6_sip-13.10.0.tar.gz"
+    sha256 "d6daa95a0bd315d9ec523b549e0ce97455f61ded65d5eafecd83ed2aa4ae5350"
+  end
+
 
   def install
     venv = virtualenv_create(libexec, "python3")
