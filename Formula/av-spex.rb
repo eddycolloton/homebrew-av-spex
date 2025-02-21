@@ -9,10 +9,10 @@ class AvSpex < Formula
   license "GPL-3.0-only"
 
   bottle do
-    rebuild 1
+    rebuild 2
     root_url "https://github.com/JPC-AV/JPC_AV_videoQC/releases/download/v0.7.0"
     sha256 cellar: :any_skip_relocation, 
-    arm64_sonoma: "5b02a5ccc1f8b7a4727175d662e90fca5a754ee94f46401d7f0966aee6bc16d9"
+    arm64_sonoma: "29be4455482b6fc4aafa9b3ac94355be8461db8ac64c055070bf6c509d202acc"
   end
 
   depends_on "python@3.10"
